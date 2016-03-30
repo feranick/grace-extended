@@ -1,0 +1,12 @@
+diff -Nru grace-5.1.25.orig/ac-tools/configure.in grace-5.1.25/ac-tools/configure.in
+--- grace-5.1.25.orig/ac-tools/configure.in	2015-03-06 17:02:04.000000000 -0500
++++ grace-5.1.25/ac-tools/configure.in	2015-03-06 17:03:07.000000000 -0500
+@@ -283,7 +283,7 @@
+     dnl **** default settings for gcc
+     DEBUG="-g -O2"
+     OPTIMIZE="-O2"
+-    CFLAGS="-fno-common -Wall -Wpointer-arith -Wnested-externs"
++    CFLAGS="-fno-common -Wall -Wpointer-arith -Wnested-externs -mtune=native -mfpmath=sse -msse -msse2 -msse3 -mmmx -m3dnow"
+ 
+     dnl **** check for strength-reduce bug
+     ACX_GCC_STRENGTH_REDUCE(CFLAGS="$CFLAGS -fno-strength-reduce")

@@ -8,7 +8,7 @@ repos:
 1. Default print resolution for all printing devices have been bumped to 300 dpi (from 
 72dpi).
 
-2.The vertical toolbar has been extended to include buttons for common operations such as: 
+2. The vertical toolbar has been extended to include buttons for common operations such as: 
 ASCII import and export, Print settings, Objects, and other data manipulation functions.
 
 3. Pointer coordinates: under the Window menu, the new function allows the user to click 

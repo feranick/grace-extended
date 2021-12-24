@@ -50,6 +50,8 @@ This patch adds instantaneous updating to the major widgets. Only the feature ch
 
 9. file with legend captions can now be added on command line 
 
+10. Add buttons for quick evaluation of formula
+
 Additional system-level patches (available in a single patch or as individual patches):
 
 1. grace-opt-flags_5.1.25-3: Added compiling optimization flags for better performance

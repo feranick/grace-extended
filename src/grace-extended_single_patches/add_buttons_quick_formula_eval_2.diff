@@ -1,10 +1,6 @@
-Description: Add buttons for quick formula evaluation 
-Author: Nicola Ferralis
-Index: grace-5.1.25/src/compwin.c
-===================================================================
 diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
---- grace-5.1.25.orig/src/compwin.c	2008-05-19 17:55:45.000000000 -0400
-+++ grace-5.1.25/src/compwin.c	2021-12-24 13:19:52.000000000 -0500
+--- grace-5.1.25.orig/src/compwin.c	2021-12-24 15:01:47.000000000 -0500
++++ grace-5.1.25/src/compwin.c	2021-12-24 14:59:00.000000000 -0500
 @@ -60,6 +60,7 @@
  static Widget but2[3];
  
@@ -14,7 +10,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  static void do_linearc_proc(Widget w, XtPointer client_data, XtPointer call_data);
  static void do_xcor_proc(Widget w, XtPointer client_data, XtPointer call_data);
 @@ -77,9 +78,11 @@
- static void do_prune_toggle(Widget w, XtPointer client_data, XtPointer call_data);
+ static void do_prune_toggle(int c,  void *data);
  static void do_prune_proc(Widget w, XtPointer client_data, XtPointer call_data);
  static void set_regr_sensitivity(Widget , XtPointer , XtPointer );
 +static TextStructure *amount_text;
@@ -34,52 +30,52 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  
  	eui.top = XmCreateDialogShell(app_shell, "evaluateExpression", NULL, 0);
          XtVaSetValues(eui.top, XmNallowShellResize, True, NULL);
-@@ -114,6 +117,44 @@
-             xmRowColumnWidgetClass, dialog,
+@@ -115,6 +118,44 @@
              XmNrecomputeSize, True,
              NULL);
-+    
+ 
 +    CreateSeparator(rc_trans);
 +    fr = CreateFrame(rc_trans, "Quick Eval");
 +    rc_btn = CreateVContainer(fr);
-+    
++
 +    int type_add = 1;
 +    int type_sub = 2;
 +    int type_mul = 3;
 +    int type_div = 4;
-+        
++
 +    rc_btn1 = CreateHContainer(rc_btn);
 +    amount_text = CreateCSText(rc_btn1, "Amount");
 +    SetTextString(amount_text, "0.1");
-+    
++
 +    rc_btn1 = CreateHContainer(rc_btn);
 +    eui.bt_add = XmCreatePushButton (rc_btn1, "Add", NULL, NULL);
 +    XtAddCallback (eui.bt_add, XmNarmCallback, compute_aac_btn, (XtPointer) type_add);
 +    XtAddCallback (eui.bt_add, XmNactivateCallback, compute_aac_btn, (XtPointer) type_add);
 +    XtAddCallback (eui.bt_add, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_add);
 +    XtManageChild (eui.bt_add);
-+    
++
 +    eui.bt_sub = XmCreatePushButton (rc_btn1, "Sub", NULL, NULL);
 +    XtAddCallback (eui.bt_sub, XmNarmCallback, compute_aac_btn, (XtPointer) type_sub);
 +    XtAddCallback (eui.bt_sub, XmNactivateCallback, compute_aac_btn, (XtPointer) type_sub);
 +    XtAddCallback (eui.bt_sub, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_sub);
 +    XtManageChild (eui.bt_sub);
-+    
++
 +    eui.bt_mul = XmCreatePushButton (rc_btn1, "Mul", NULL, NULL);
 +    XtAddCallback (eui.bt_mul, XmNarmCallback, compute_aac_btn, (XtPointer) type_mul);
 +    XtAddCallback (eui.bt_mul, XmNactivateCallback, compute_aac_btn, (XtPointer) type_mul);
 +    XtAddCallback (eui.bt_mul, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_mul);
 +    XtManageChild (eui.bt_mul);
-+    
++
 +    eui.bt_div = XmCreatePushButton (rc_btn1, "Div", NULL, NULL);
 +    XtAddCallback (eui.bt_div, XmNarmCallback, compute_aac_btn, (XtPointer) type_div);
 +    XtAddCallback (eui.bt_div, XmNactivateCallback, compute_aac_btn, (XtPointer) type_div);
 +    XtAddCallback (eui.bt_div, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_div);
 +    XtManageChild (eui.bt_div);
- 
++
  	CreateSeparator(rc_trans);
  	eui.formula_item = CreateScrollTextItem2(rc_trans, 3, "Formula:");
-@@ -147,6 +188,113 @@
+ 
+@@ -147,6 +188,112 @@
      unset_wait_cursor();
  }
  
@@ -97,16 +93,16 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    char *rarray;
 +
 +    aac_mode = (int) data;
-+    
++
 +    if (aac_mode == AAC_CLOSE) {
 +        UnmanageChild(eui.top);
 +        return;
 +    }
 +
 +    set_wait_cursor();
-+    
++
 +    int type = (int) client_data;
-+    
++
 +    if (type == 1) {
 +        strcat(strcpy(fstr,"y=y+"),GetTextString(amount_text));
 +    } else if (type == 2) {
@@ -118,16 +114,16 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    } else {
 +        errmsg("Missing formula");
 +    }
-+    
-+    
++
++
 +    restr_type = GetOptionChoice(eui.restr_item->r_sel);
 +    restr_negate = GetToggleButtonState(eui.restr_item->negate);
-+    
++
 +    g1_ok = GetSingleListChoice(eui.srcdest->src->graph_sel, &gno1);
 +    g2_ok = GetSingleListChoice(eui.srcdest->dest->graph_sel, &gno2);
 +    ns1 = GetListChoices(eui.srcdest->src->set_sel, &svalues1);
 +    ns2 = GetListChoices(eui.srcdest->dest->set_sel, &svalues2);
-+    
++
 +    error = FALSE;
 +    if (g1_ok == RETURN_FAILURE || g2_ok == RETURN_FAILURE) {
 +        error = TRUE;
@@ -149,14 +145,14 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +                setno2 = nextset(gno2);
 +                set_set_hidden(gno2, setno2, FALSE);
 +            }
-+	    
++
 +            resno = get_restriction_array(gno1, setno1,
 +                restr_type, restr_negate, &rarray);
 +	    if (resno != RETURN_SUCCESS) {
 +	        errmsg("Error in evaluation restriction");
 +	        break;
 +	    }
-+            
++
 +            resno = do_compute(gno1, setno1, gno2, setno2, rarray, fstr);
 +	    XCFREE(rarray);
 +	    if (resno != RETURN_SUCCESS) {
@@ -165,7 +161,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +	    }
 +        }
 +    }
-+    
++
 +    if (aac_mode == AAC_ACCEPT && error == FALSE) {
 +        UnmanageChild(eui.top);
 +    }
@@ -188,7 +184,6 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    unset_wait_cursor();
 +}
 +//******************************************************
-+
 +
  /*
   * evaluate a formula

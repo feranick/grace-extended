@@ -1,0 +1,367 @@
+diff -Nru grace-5.1.25.orig/T1lib/t1lib/t1base.c grace-5.1.25/T1lib/t1lib/t1base.c
+--- grace-5.1.25.orig/T1lib/t1lib/t1base.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/T1lib/t1lib/t1base.c	2021-12-27 19:07:02.000000000 -0500
+@@ -653,7 +653,7 @@
+  
+ 
+ 
+-/* test_for_t1_file returns 0 if a file "name.pfa" or "name.pfb"
++/* test_for_t1_file returns 0 if a file "name.pfa" or "name.pfb" or "name.t1"
+    was found. Else, -1 is returned. If successful, buffer contains the
+    found filename string */
+ int test_for_t1_file( char *buffer )
+@@ -671,6 +671,17 @@
+   while (buffer[i]!=0){
+     i++;
+   }
++  /* One-and-a-halfth case: t1, alternate extension for pfb */
++  /* Check this first in case the buffer is one character shorter from the two-character extension */
++  buffer[i] = '.';
++  buffer[i+1]='t';
++  buffer[i+2]='1';
++  buffer[i+3]='\0';
++  if ((FullName=intT1_Env_GetCompletePath(buffer,T1_PFAB_ptr))!=NULL) {
++    free(FullName);
++    return(0);
++  }
++
+   buffer[i]='.';
+   buffer[i+1]='p';
+   buffer[i+2]='f';
+diff -Nru grace-5.1.25.orig/ac-tools/configure.in grace-5.1.25/ac-tools/configure.in
+--- grace-5.1.25.orig/ac-tools/configure.in	2021-12-27 17:31:43.000000000 -0500
++++ grace-5.1.25/ac-tools/configure.in	2021-12-27 19:08:07.000000000 -0500
+@@ -283,7 +283,7 @@
+     dnl **** default settings for gcc
+     DEBUG="-g -O2"
+     OPTIMIZE="-O2"
+-    CFLAGS="-fno-common -Wall -Wpointer-arith -Wnested-externs"
++    CFLAGS="-fno-common -Wall -Wpointer-arith -Wnested-externs -mtune=native -mfpmath=sse -msse -msse2 -msse3 -mmmx -m3dnow"
+ 
+     dnl **** check for strength-reduce bug
+     ACX_GCC_STRENGTH_REDUCE(CFLAGS="$CFLAGS -fno-strength-reduce")
+@@ -554,8 +554,17 @@
+ 
+ if test $fftw = true
+ then
+-  ACX_CHECK_FFTW(2.1.3, AC_DEFINE(HAVE_FFTW),
+-                 AC_MSG_RESULT(--> using legacy unoptimized FFT code))
++  AC_CHECK_HEADERS(fftw3.h,
++  [
++	AC_CHECK_LIB(fftw3, fftw_execute,
++	[
++		FFTW_LIB="-lfftw3"
++		AC_DEFINE(HAVE_FFTW)
++	],
++	[AC_MSG_RESULT([--> using legacy unoptimized FFT code])]
++	)
++  ],
++  [AC_MSG_RESULT([--> using legacy unoptimized FFT code])])
+ fi
+ 
+ dnl **** check for libz - needed for PDF and PNG drivers and XmHTML
+diff -Nru grace-5.1.25.orig/configure grace-5.1.25/configure
+--- grace-5.1.25.orig/configure	2021-12-27 17:31:43.000000000 -0500
++++ grace-5.1.25/configure	2021-12-27 19:08:07.000000000 -0500
+@@ -748,7 +748,6 @@
+ enable_debug
+ enable_maintainer
+ with_netcdf_libraries
+-with_fftw_library
+ with_zlib_library
+ with_jpeg_library
+ with_png_library
+@@ -1412,7 +1411,6 @@
+   --with-helpviewer=COMMAND    define help viewer command ["mozilla %s"]
+   --with-printcmd=PROG         use PROG for printing
+   --with-netcdf-libraries=OBJ  use OBJ as netCDF libraries [-lnetcdf]
+-  --with-fftw-library=OBJ      use OBJ as FFTW library [-lfftw]
+   --with-zlib-library=OBJ      use OBJ as ZLIB library [-lz]
+   --with-jpeg-library=OBJ      use OBJ as JPEG library [-ljpeg]
+   --with-png-library=OBJ       use OBJ as PNG library [-lpng]
+@@ -8225,84 +8223,69 @@
+ 
+ if test $fftw = true
+ then
++  for ac_header in fftw3.h
++do :
++  ac_fn_c_check_header_mongrel "$LINENO" "fftw3.h" "ac_cv_header_fftw3_h" "$ac_includes_default"
++if test "x$ac_cv_header_fftw3_h" = xyes; then :
++  cat >>confdefs.h <<_ACEOF
++#define HAVE_FFTW3_H 1
++_ACEOF
+ 
+-
+-# Check whether --with-fftw_library was given.
+-if test "${with_fftw_library+set}" = set; then :
+-  withval=$with_fftw_library; fftw_library="$withval"
+-fi
+-
+-  if test "x$fftw_library" = "x"
+-  then
+-    fftw_library=-lfftw
+-  fi
+-
+-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for FFTW library >= 2.1.3" >&5
+-$as_echo_n "checking for FFTW library >= 2.1.3... " >&6; }
+-if ${acx_cv_fftw+:} false; then :
++	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for fftw_execute in -lfftw3" >&5
++$as_echo_n "checking for fftw_execute in -lfftw3... " >&6; }
++if ${ac_cv_lib_fftw3_fftw_execute+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+-  if ${acx_cv_fftw_library+:} false; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-  acx_cv_fftw_library=$fftw_library
+-fi
+-
+-
+-    save_CFLAGS=$CFLAGS
+-    save_CPPFLAGS=$CPPFLAGS
+-    save_LDFLAGS=$LDFLAGS
+-    save_LIBS=$LIBS
+-
+-    LIBS="$acx_cv_fftw_library $LIBS"
+-    if test "$cross_compiling" = yes; then :
+-  acx_cv_fftw="no"
+-
+-else
+-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++  ac_check_lib_save_LIBS=$LIBS
++LIBS="-lfftw3  $LIBS"
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+-#include <fftw.h>
+-#include <string.h>
+-      int main(void) {
+-        char *vlib = (char *) fftw_version;
+-        if (strcmp(vlib, "2.1.3") < 0) {
+-          exit(1);
+-        }
+-        exit(0);
+-      }
+-
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char fftw_execute ();
++int
++main ()
++{
++return fftw_execute ();
++  ;
++  return 0;
++}
+ _ACEOF
+-if ac_fn_c_try_run "$LINENO"; then :
+-  acx_cv_fftw="yes"
++if ac_fn_c_try_link "$LINENO"; then :
++  ac_cv_lib_fftw3_fftw_execute=yes
+ else
+-  acx_cv_fftw="no"
++  ac_cv_lib_fftw3_fftw_execute=no
+ fi
+-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+-  conftest.$ac_objext conftest.beam conftest.$ac_ext
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext conftest.$ac_ext
++LIBS=$ac_check_lib_save_LIBS
+ fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_fftw3_fftw_execute" >&5
++$as_echo "$ac_cv_lib_fftw3_fftw_execute" >&6; }
++if test "x$ac_cv_lib_fftw3_fftw_execute" = xyes; then :
+ 
++		FFTW_LIB="-lfftw3"
++		$as_echo "#define HAVE_FFTW 1" >>confdefs.h
+ 
+ 
+-    CFLAGS=$save_CFLAGS
+-    CPPFLAGS=$save_CPPFLAGS
+-    LDFLAGS=$save_LDFLAGS
+-    LIBS=$save_LIBS
+-
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: --> using legacy unoptimized FFT code" >&5
++$as_echo "--> using legacy unoptimized FFT code" >&6; }
+ 
+ fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $acx_cv_fftw" >&5
+-$as_echo "$acx_cv_fftw" >&6; }
+-  if test "$acx_cv_fftw" = "yes"
+-  then
+-    FFTW_LIB="$acx_cv_fftw_library"
+-    $as_echo "#define HAVE_FFTW 1" >>confdefs.h
+ 
+-  else
+-    FFTW_LIB=
+-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: --> using legacy unoptimized FFT code" >&5
++
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: --> using legacy unoptimized FFT code" >&5
+ $as_echo "--> using legacy unoptimized FFT code" >&6; }
+-  fi
++fi
++
++done
+ 
+ fi
+ 
+diff -Nru grace-5.1.25.orig/src/fourier.c grace-5.1.25/src/fourier.c
+--- grace-5.1.25.orig/src/fourier.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/fourier.c	2021-12-27 19:08:07.000000000 -0500
+@@ -230,7 +230,8 @@
+ #else
+ /* Start of new FFTW-based transforms by Marcus H. Mendenhall */
+ 
+-#include <fftw.h>
++#include <complex.h>
++#include <fftw3.h>
+ #include <string.h>
+ 
+ static char  *wisdom_file=0;
+@@ -258,7 +259,7 @@
+   fftw_plan plan;
+   int i;
+   double ninv;
+-  FFTW_COMPLEX *cbuf;
++  fftw_complex *cbuf;
+   static int wisdom_inited=0;
+   char *ram_cache_wisdom;
+   int plan_flags;
+@@ -274,7 +275,7 @@
+     if(wisdom_file && wisdom_file[0] ) {
+       /* if a file was specified in GRACE_FFTW_WISDOM_FILE, try to read it */
+       FILE *wf;
+-      fftw_status fstat;
++      int fstat;
+       wf=fopen(wisdom_file,"r");
+       if(wf) {
+ 	fstat=fftw_import_wisdom_from_file(wf);
+@@ -286,30 +287,35 @@
+     }
+   }
+ 
+-  plan_flags=using_wisdom? (FFTW_USE_WISDOM | FFTW_MEASURE) : FFTW_ESTIMATE;
+-
+-  plan=fftw_create_plan(n, iflag?FFTW_BACKWARD:FFTW_FORWARD,
+-		   plan_flags | FFTW_IN_PLACE);
+-  cbuf=xcalloc(n, sizeof(*cbuf));
++  /* fftw_malloc behaves like malloc except that it properly aligns the array
++   * when SIMD instructions (such as SSE and Altivec) are available.
++   */
++  cbuf=(fftw_complex *)fftw_malloc(n*sizeof(fftw_complex));
+   if(!cbuf) return;
++
+   for(i=0; i<n; i++) {
+-    cbuf[i].re=jr[i]; cbuf[i].im=ji[i];
++    cbuf[i] = jr[i] + I * ji[i];
+   }
+-  fftw(plan, 1, cbuf, 1, 1, 0, 1, 1);
++
++  plan_flags=using_wisdom? (FFTW_MEASURE) : FFTW_ESTIMATE;
++  plan=fftw_plan_dft_1d(n, cbuf, cbuf, iflag?FFTW_BACKWARD:FFTW_FORWARD,
++		   plan_flags);
++
++  fftw_execute(plan);
+   fftw_destroy_plan(plan);
+ 
+   if(!iflag) {
+     ninv=1.0/n;
+     for(i=0; i<n; i++) {
+-    jr[i]=cbuf[i].re*ninv; ji[i]=cbuf[i].im*ninv;
++    jr[i]=creal(cbuf[i])*ninv; ji[i]=cimag(cbuf[i])*ninv;
+     }
+   } else {
+     for(i=0; i<n; i++) {
+-      jr[i]=cbuf[i].re; ji[i]=cbuf[i].im;
++      jr[i]=creal(cbuf[i]); ji[i]=cimag(cbuf[i]);
+     }
+   }
+ 
+-  XCFREE(cbuf);
++  fftw_free(cbuf);
+   
+ }
+ 
+diff -Nru grace-5.1.25.orig/src/svgdrv.c grace-5.1.25/src/svgdrv.c
+--- grace-5.1.25.orig/src/svgdrv.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/svgdrv.c	2021-12-27 19:07:08.000000000 -0500
+@@ -745,7 +745,7 @@
+             -tm->cxy, -tm->cyy,
+             scaleval(vp.x), scaleval(vp.y));
+ 
+-    fprintf(prstream, escape_specials((unsigned char *) s, len));
++    fprintf(prstream, "%s", escape_specials((unsigned char *) s, len));
+ 
+     fprintf(prstream, "</text>\n");
+ }
+diff -Nru grace-5.1.25.orig/src/utils.c grace-5.1.25/src/utils.c
+--- grace-5.1.25.orig/src/utils.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/utils.c	2021-12-27 19:07:08.000000000 -0500
+@@ -1171,12 +1171,12 @@
+     if (inwin) {
+         stufftextwin(s);
+     } else {
+-        printf(s);
++        printf("%s", s);
+     }
+ #endif
+     /* log results to file */
+     if (resfp != NULL) {
+-	fprintf(resfp, s);
++	fprintf(resfp, "%s", s);
+     }
+ }
+ 
+@@ -1222,7 +1222,9 @@
+     char buf[GR_MAXPATHLEN];
+     
+     if (wd == NULL) {
+-        getcwd(workingdir, GR_MAXPATHLEN - 1);
++        if (getcwd(workingdir, GR_MAXPATHLEN - 1) == NULL) {
++	    return RETURN_FAILURE;
++        }
+         if (workingdir[strlen(workingdir)-1] != '/') {
+             strcat(workingdir, "/");
+         }
+diff -Nru grace-5.1.25.orig/src/xmgrace.c grace-5.1.25/src/xmgrace.c
+--- grace-5.1.25.orig/src/xmgrace.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/xmgrace.c	2021-12-27 19:06:56.000000000 -0500
+@@ -211,7 +211,7 @@
+ String fallbackResourcesCommon[] = {
+     "XMgrace.consoleDialog*text.columns: 72",
+     "XMgrace.consoleDialog*text.rows: 5",
+-    "XMgrace*background: #e5e5e5",
++    /*"XMgrace*background: #e5e5e5",
+     "XMgrace*foreground: #000000",
+     "XMgrace*XbaeMatrix.oddRowBackground: #cccccc",
+     "XMgrace*XbaeMatrix.evenRowBackground: #cfe7e7",
+@@ -223,18 +223,18 @@
+     "XMgrace*XmPushButton.background: #b0c4de",
+     "XMgrace*XmMenuShell*XmPushButton.background: #e5e5e5",
+     "XMgrace*XmText*background: #cfe7e7",
+-    "XMgrace*XmToggleButton.selectColor: #ff0000",
++    "XMgrace*XmToggleButton.selectColor: #ff0000",*/
+     "XMgrace*XmToggleButton.fillOnSelect: true",
+     "XMgrace*XmSeparator.margin: 0",
+ #ifdef WITH_XMHTML
+-    "XMgrace*XmHTML.background: #ffffff",
+-    "XMgrace*XmHTML.foreground: #000000",
++/*    "XMgrace*XmHTML.background: #ffffff",
++    "XMgrace*XmHTML.foreground: #000000", */
+     "XMgrace*XmHTML.width: 600",
+     "XMgrace*XmHTML.height: 500",
+ #endif
+-    "XMgrace*mainWin.shadowThickness: 0",
++/*    "XMgrace*mainWin.shadowThickness: 0",
+     "XMgrace*mainWin.menuBar.shadowThickness: 1",
+-    "XMgrace*menuBar*tearOffModel: XmTEAR_OFF_ENABLED",
++    "XMgrace*menuBar*tearOffModel: XmTEAR_OFF_ENABLED", */
+     "XMgrace*dragInitiatorProtocolStyle: XmDRAG_NONE",
+     "XMgrace*dragReceiverProtocolStyle:  XmDRAG_NONE",
+     "XMgrace*fileMenu.newButton.acceleratorText: Ctrl+N",

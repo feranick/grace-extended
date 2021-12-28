@@ -1,0 +1,43 @@
+diff -Nru grace-5.1.25.orig/src/graphutils.h grace-5.1.25/src/graphutils.h
+--- grace-5.1.25.orig/src/graphutils.h	2004-07-03 13:47:45.000000000 -0700
++++ grace-5.1.25/src/graphutils.h	2010-09-02 18:28:01.824282479 -0700
+@@ -55,7 +55,8 @@
+ #define GA_ORDER_HV_INV 4
+ 
+ /* Default page offsets and gaps for graph arranging */
+-#define GA_OFFSET_DEFAULT    0.15
++#define GA_OFFSET_DEFAULT_1    0.10
++#define GA_OFFSET_DEFAULT_2    0.05
+ #define GA_GAP_DEFAULT       0.2
+ 
+ char *get_format_types(int f);
+diff -Nru grace-5.1.25.orig/src/worldwin.c grace-5.1.25/src/worldwin.c
+--- grace-5.1.25.orig/src/worldwin.c	2004-07-03 13:47:46.000000000 -0700
++++ grace-5.1.25/src/worldwin.c	2010-09-02 18:28:01.824282479 -0700
+@@ -240,10 +240,10 @@
+         SetSpinChoice(ui->nrows, (double) 1);
+         SetSpinChoice(ui->ncols, (double) 1);
+         
+-        SetSpinChoice(ui->toff, GA_OFFSET_DEFAULT);
+-        SetSpinChoice(ui->loff, GA_OFFSET_DEFAULT);
+-        SetSpinChoice(ui->roff, GA_OFFSET_DEFAULT);
+-        SetSpinChoice(ui->boff, GA_OFFSET_DEFAULT);
++        SetSpinChoice(ui->toff, GA_OFFSET_DEFAULT_2);
++        SetSpinChoice(ui->loff, GA_OFFSET_DEFAULT_1);
++        SetSpinChoice(ui->roff, GA_OFFSET_DEFAULT_2);
++        SetSpinChoice(ui->boff, GA_OFFSET_DEFAULT_1);
+ 
+         SetSpinChoice(ui->hgap, GA_GAP_DEFAULT);
+         SetSpinChoice(ui->vgap, GA_GAP_DEFAULT);
+diff -Nru grace-5.1.25.orig/templates/Default.agr grace-5.1.25/templates/Default.agr
+--- grace-5.1.25.orig/templates/Default.agr	2007-02-16 14:43:31.000000000 -0800
++++ grace-5.1.25/templates/Default.agr	2010-09-02 18:27:27.956278591 -0700
+@@ -104,7 +134,7 @@
+ @    world 0, 0, 1, 1
+ @    stack world 0, 0, 0, 0
+ @    znorm 1
+-@    view 0.150000, 0.150000, 1.150000, 0.850000
++@    view 0.100000, 0.100000, 1.244747, 0.950000
+ @    title ""
+ @    title font 0
+ @    title size 1.500000

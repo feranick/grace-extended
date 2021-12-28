@@ -1,0 +1,69 @@
+diff -Nru grace-5.1.25.orig/src/xmgrace.c grace-5.1.25/src/xmgrace.c
+--- grace-5.1.25.orig/src/xmgrace.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/xmgrace.c	2021-12-27 18:25:07.000000000 -0500
+@@ -970,7 +970,7 @@
+  */
+ void startup_gui(void)
+ {
+-    Widget bt, rc3, rcleft;
++    Widget bt, rc2, rc3, rcleft;
+     Pixmap icon, shape;
+ 
+ /* 
+@@ -1129,14 +1129,44 @@
+     bt = CreateBitmapButton(rc3, 16, 16, up_bits);
+     AddButtonCB(bt, graph_scroll_proc, (void *) GSCROLL_UP);
+ 
+-    CreateSeparator(rcleft);
+-
+     bt = CreateButton(rcleft, "AutoT");
+     AddButtonCB(bt, autoticks_proc, NULL);
+ 
+     bt = CreateButton(rcleft, "AutoO");
+     AddButtonCB(bt, autoon_proc, NULL);
+ 
++    CreateSeparator(rcleft);
++
++    bt = CreateButton(rcleft, "Imp ASCII");
++    AddButtonCB(bt, create_file_popup, NULL);
++
++    bt = CreateButton(rcleft, "Exp ASCII");
++    AddButtonCB(bt, create_write_popup, NULL);
++
++    bt = CreateButton(rcleft, "Print set");
++    AddButtonCB(bt, create_printer_setup, NULL);
++
++    CreateSeparator(rcleft);
++
++    rc2 = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass, rcleft,
++				  XmNorientation, XmHORIZONTAL,
++				  XmNpacking, XmPACK_COLUMN,
++				  XmNnumColumns, 2,
++				  XmNspacing, 0,
++				  XmNentryBorder, 0,
++				  NULL);
++    bt = CreateButton(rc2, "Ev");
++    AddButtonCB(bt, create_eval_frame, NULL);
++    bt = CreateButton(rc2, "Re");
++    AddButtonCB(bt, create_define_frame, NULL);
++
++    bt = CreateButton(rc2, "Rg");
++    AddButtonCB(bt, create_reg_frame, NULL);
++    bt = CreateButton(rc2, "NL");
++    AddButtonCB(bt, create_nonl_frame, NULL);
++    
++    CreateSeparator(rcleft);
++
+     rc3 = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass, rcleft,
+ 				  XmNorientation, XmHORIZONTAL,
+ 				  XmNpacking, XmPACK_COLUMN,
+@@ -1167,6 +1197,9 @@
+     stack_depth_item = CreateLabel(rcleft, "");
+     curw_item = CreateLabel(rcleft, "");
+ 
++    bt = CreateButton(rcleft, "Objects");
++    AddButtonCB(bt, define_objects_popup, NULL);
++
+     bt = CreateButton(rcleft, "Exit");
+     AddButtonCB(bt, MenuCB, (void *) MENU_EXIT);
+ 

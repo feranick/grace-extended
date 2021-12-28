@@ -1,0 +1,53 @@
+diff -Nru grace-5.1.25.orig/src/events.c grace-5.1.25/src/events.c
+--- grace-5.1.25.orig/src/events.c	2021-12-27 18:29:26.000000000 -0500
++++ grace-5.1.25/src/events.c	2021-12-27 18:30:00.000000000 -0500
+@@ -542,6 +542,12 @@
+ 		set_actioncb(NULL);
+ 		update_nonl_frame();
+ 		break;
++	    case COORD_POS:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Pointer position: %f, %f, \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		break;
++
+             default:
+                 break;
+             }
+@@ -852,6 +858,10 @@
+ 	sprintf(buf, "Click on the approximate position of the maximum of the peak #3.\n");
+ 	stufftext(buf);
+ 	break;
++    case COORD_POS:
++	set_cursor(0);
++	set_left_footer("Click to determine the pointer's coordinates");
++	break;
+     }
+ 
+     action_flag = act;
+diff -Nru grace-5.1.25.orig/src/events.h grace-5.1.25/src/events.h
+--- grace-5.1.25.orig/src/events.h	2021-12-27 18:29:26.000000000 -0500
++++ grace-5.1.25/src/events.h	2021-12-27 18:30:00.000000000 -0500
+@@ -87,7 +87,8 @@
+     PEAK_POS2,
+     PEAK_POS1B,
+     PEAK_POS2B,
+-    PEAK_POS3B
++    PEAK_POS3B,
++    COORD_POS
+ } CanvasAction;
+ 
+ /* add points at */
+diff -Nru grace-5.1.25.orig/src/xmgrace.c grace-5.1.25/src/xmgrace.c
+--- grace-5.1.25.orig/src/xmgrace.c	2021-12-27 18:29:31.000000000 -0500
++++ grace-5.1.25/src/xmgrace.c	2021-12-27 18:30:00.000000000 -0500
+@@ -882,6 +882,10 @@
+ /*
+  *     CreateMenuButton(menupane, "Area/perimeter...", 'A', create_area_frame, NULL);
+  */
++
++    submenupane = CreateMenu(menupane, "Coordinate pointer", 'p', FALSE);
++    CreateMenuButton(submenupane, "Click and Show", 'C', set_actioncb, (void *) COORD_POS);
++    CreateMenuButton(submenupane, "Stop", 'S', set_actioncb, NULL); 
+     CreateMenuButton(menupane, "Console", 'l', create_monitor_frame_cb, NULL);
+     

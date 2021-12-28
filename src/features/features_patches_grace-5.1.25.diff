@@ -1,0 +1,1253 @@
+diff -Nru grace-5.1.25.orig/doc/UsersGuide.html grace-5.1.25/doc/UsersGuide.html
+--- grace-5.1.25.orig/doc/UsersGuide.html	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/doc/UsersGuide.html	2021-12-27 18:55:32.000000000 -0500
+@@ -1516,6 +1516,103 @@
+ sample range or to produce an evenly spaced set from an irregular
+ one.</P>
+ 
++<P>Under the "Library" menu, several functions are available under the
++categories: "Gaussian Functions", "Lorentzian Functions", "Peak Functions",
++ "Periodic Peak Functions" and "Baseline Functions".</P>
++
++<P><i>Gaussian</i><br>&nbsp y = A0 + (A3*2*sqrt(ln(2)/pi)/A2)*exp(-4*ln(2)*((x-A1)/A2)^2)<br>
++&nbsp where: A0: Baseline offset; A1: Center of the peak; A2: Full width at half
++maximum; A3: Peak area.<br> The center and initial amplitude of the peak can be set from
++ user input (via mouse coordinates). </P>
++
++<br>
++<P><i>Gaussian (Chromatography):</i><br>
++&nbsp y = A0 + (1/sqrt(2*pi))*(A3/A2)*exp(-(x-A1)^2/2*A2^2)
++ A0: Baseline offset; A1: Center of the peak (retention time); A2:
++ Standard deviation of the peak; A3: Peak area. <br> The center and initial amplitude of the peak can be set from
++ user input (via mouse coordinates). </P>
++
++<br>
++<P><i>Lorentzian</i><br>&nbsp y = A0 + (2*A2*A3/pi)/(4*(x-A1)^2 + A2^2)<br>
++&nbsp where: A0: Baseline offset; A1: Center of the peak; A2: Full width at half
++maximum; A3: Peak area. <br> The center and initial amplitude of the peak can be set from
++ user input (via mouse coordinates).</P>
++
++<br>
++<P><i>Peak Functions</i><br>
++<i>Pseudo Voigt 1</i><br>
++&nbsp y = A0 + A3 * (A4*(2/pi)*A2/(4*(x-A1)^2+A2^2) + <br>(1-A4)*exp(-4*ln(2)*(x-A1)^2/A2^2)*(sqrt(4*ln(2))/(A2*sqrt(pi))))<br>
++&nbsp where: Gaussian and Lorentzian have the same width; A0: Baseline offset;
++ A1: Center of the peak; A2: Full width at half maximum; A3: Amplitude;
++ A4: Profile shape factor.<br>
++<i>Pseudo Voigt 2</i><br>
++&nbsp y = A0 + A3 * (A5*(2/pi)*A2/(4*(x-A1)^2+A2^2) + (1-A5)*exp(-4*ln(2)*(x-A1)^2/A4^2)*(sqrt(4*ln(2))/(A2*sqrt(pi))))<br>
++&nbsp where: Gaussian and Lorentzian have different width; A0: Baseline offset;
++ A1: Center of the peak; A2: Full width at half maximum; A3: Amplitude;
++ A4: Profile shape factor.<br>
++<i>Doniach-Sunjic</i><br>
++&nbsp y = A0 + A3*cos((pi*A4/2)+(1-A4)*atan((x-A1)/A2))/(A2^2+(x-A1)^2)^((1-A4)/2)<br>
++&nbsp where:A0: Baseline offset; A1: Center of the peak; A2: Full width at half maximum;<br>
++&nbspA3: Peak area; A4: Asymmetry parameter.<br>
++<i>Asymmetric double Sigmoidal</i><br>
++&nbsp y = A0 + A3*(1/(1+exp(-(x-A1+A2/2)/A4)))*(1-(1/(1+exp(-(x-A1-A2/2)/A5))))<br>
++&nbsp where: A0: Baseline offset; A1: Center of the peak; A2: Width 1;
++ A3: Amplitude; A4: Width 2; A5: Width 5.<br>
++<i>Logarithm Normal:</i> <br>
++&nbsp y = A0 + A3*exp(-((ln(x)-ln(A1))^2)/(2*A2))<br>
++&nbsp where: A0: Baseline offset; A1: Center of the peak; A2: Width <br>
++<i>Gram-Charlier A-Series (GCAS)</i><br>
++&nbsp y = A0 + A3/(A2*sqrt(2*pi))*exp(-0.5*((x-A1)/A2)^2)*(1+(A4/6)*
++ (((x-A1)/A2)^3-3*(x-A1)/A2)+(A5/24)*(((x-A1)/A2)^4-6*((x-A1)/A2)^3+3))<br>
++&nbsp where: A0: Baseline offset; A1: Center of the peak; A2: Standard deviation;
++ A3: Peak Area; A4: Skew; A5: Excess. <br>
++<i>Edgeworth-Cramer Series</i><br>
++&nbsp y = A0 + A3/(A2*sqrt(2*pi))*exp(-0.5*((x-A1)/A2)^2)*(1+(A4/6)*
++ (((x-A1)/A2)^3-3*(x-A1)/A2)+(A5/24)*(((x-A1)/A2)^4-6 *((x-A1)/A2)^3+3)
++ +(A5^2/720)*(((x-A1)/A2)^6-15*((x-A1)/A2)^4+45*((x-A1)/A2)^2-15))<br>
++&nbsp where: A0: Baseline offset; A1: Center of the peak; A2: Standard deviation;
++ A3: Peak Area; A4: Skew; A5: Excess. <br>
++<i>Inverse Polynomial</i><br>
++&nbsp y=A0+A3/(1+ A4*(2*(x-A1)/A2)^2 + A5*(2*(x-A1)/A2)^4 + A6*(2*(x-A1)/A2)^6) <br>
++&nbsp where: A0: Baseline offset; A1: Center of the peak; A2: Standard deviation;
++ A3: Peak Area; A4, A5, A6: Parameters. <br>
++ </P>
++
++<br>
++<P><i>Periodic Peak Functions</i><br>
++<i>Sine:</i> <br>
++&nbspy=A0+A3*sin(pi*(x-A1)/A2)<br>
++&nbspwhere: A0: Baseline offset; A1: Center; A2: Width; A3: Amplitude.<br>
++<i>Sine Square: </i><br>
++&nbspy=A0+A3*sin(pi*(x-A1)/A2)^2<br>
++&nbspwhere: A0: Baseline offset; A1: Center; A2: Width; A3: Amplitude.<br>
++<i>Sine damp: </i><br>
++&nbspy=A0+A3*exp(-x/A4)*sin(pi*(x-A1)/A2)<br>
++&nbspwhere: A0: Baseline offset; A1: Center; A2: Width; A3: Amplitude; A4: Decay time. <br>
++</P>
++
++<br>
++<P><i>Baseline Functions</i><br>
++<i>Exponential Decay 1:</i><br>
++&nbsp;y=A0+A3*exp(-(x-A1)/A2)<br>
++<b>Exponential Decay 2:</b> <br>
++&nbsp;y=A0+A3*exp(-(x-A1)/A2)+A6*exp(-(x-A4)/A5);<br>
++<i>Exponential Growth 1:</i> <br>
++&nbsp;y=A0+A3*exp((x-A1)/A2)<br>
++<i>Exponential Growth 2: </i><br>
++&nbsp;y=A0+A3*exp(-(x-A1)/A2)+A6*exp((x-A4)/A5);<br>
++<i>Hyperbolic:</i><br>
++&nbsp;y=A0+(A1*x)/(A2+x)<br>
++<i>Bradley:</i> <br>
++&nbsp;y=A0*ln(-A1*ln(x))<br>
++<i>Logarithm 3 Parameters: </i><br>
++&nbsp;y=A0-A1*ln(x+A2)<br>
++<i>Weibull Probability Density 2 Parameters: </i><br>
++&nbsp;y=(A0/A1)*((x/A1)^(A0-1))*exp(-(x/A1)^A0)<br>
++<i>Weibull Cumulative Distribution 2 Parameters: </i><br>
++&nbsp;y=1-exp(-(x/A1)^A0)<br>
++</P>
++
+ <H3><A NAME="correlation/covariance"></A> Correlation/covariance          </H3>
+ 
+ <P>This popup can be used to compute autocorrelation
+diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
+--- grace-5.1.25.orig/src/compwin.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/compwin.c	2021-12-27 18:56:03.000000000 -0500
+@@ -60,6 +60,7 @@
+ static Widget but2[3];
+ 
+ static void compute_aac(void *data);
++static void compute_aac_btn(void *data, XtPointer client_data, XtPointer call_data);
+ static void do_digfilter_proc(Widget w, XtPointer client_data, XtPointer call_data);
+ static void do_linearc_proc(Widget w, XtPointer client_data, XtPointer call_data);
+ static void do_xcor_proc(Widget w, XtPointer client_data, XtPointer call_data);
+@@ -77,9 +78,11 @@
+ static void do_prune_toggle(Widget w, XtPointer client_data, XtPointer call_data);
+ static void do_prune_proc(Widget w, XtPointer client_data, XtPointer call_data);
+ static void set_regr_sensitivity(Widget , XtPointer , XtPointer );
++static TextStructure *amount_text;
+ 
+ typedef struct _Eval_ui {
+     Widget top;
++    Widget bt_add, bt_sub, bt_mul, bt_div;
+     SrcDestStructure *srcdest;
+     Widget formula_item;
+     RestrictionStructure *restr_item;
+@@ -91,7 +94,7 @@
+ {
+     set_wait_cursor();
+     if (eui.top == NULL) {
+-        Widget dialog, rc_trans, fr;
++        Widget dialog, rc_trans, rc_btn, rc_btn1, fr;
+ 
+ 	eui.top = XmCreateDialogShell(app_shell, "evaluateExpression", NULL, 0);
+         XtVaSetValues(eui.top, XmNallowShellResize, True, NULL);
+@@ -115,6 +118,44 @@
+             XmNrecomputeSize, True,
+             NULL);
+ 
++    CreateSeparator(rc_trans);
++    fr = CreateFrame(rc_trans, "Quick Eval");
++    rc_btn = CreateVContainer(fr);
++
++    int type_add = 1;
++    int type_sub = 2;
++    int type_mul = 3;
++    int type_div = 4;
++
++    rc_btn1 = CreateHContainer(rc_btn);
++    amount_text = CreateCSText(rc_btn1, "Amount");
++    SetTextString(amount_text, "0.1");
++
++    rc_btn1 = CreateHContainer(rc_btn);
++    eui.bt_add = XmCreatePushButton (rc_btn1, "Add", NULL, NULL);
++    XtAddCallback (eui.bt_add, XmNarmCallback, compute_aac_btn, (XtPointer) type_add);
++    XtAddCallback (eui.bt_add, XmNactivateCallback, compute_aac_btn, (XtPointer) type_add);
++    XtAddCallback (eui.bt_add, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_add);
++    XtManageChild (eui.bt_add);
++
++    eui.bt_sub = XmCreatePushButton (rc_btn1, "Sub", NULL, NULL);
++    XtAddCallback (eui.bt_sub, XmNarmCallback, compute_aac_btn, (XtPointer) type_sub);
++    XtAddCallback (eui.bt_sub, XmNactivateCallback, compute_aac_btn, (XtPointer) type_sub);
++    XtAddCallback (eui.bt_sub, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_sub);
++    XtManageChild (eui.bt_sub);
++
++    eui.bt_mul = XmCreatePushButton (rc_btn1, "Mul", NULL, NULL);
++    XtAddCallback (eui.bt_mul, XmNarmCallback, compute_aac_btn, (XtPointer) type_mul);
++    XtAddCallback (eui.bt_mul, XmNactivateCallback, compute_aac_btn, (XtPointer) type_mul);
++    XtAddCallback (eui.bt_mul, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_mul);
++    XtManageChild (eui.bt_mul);
++
++    eui.bt_div = XmCreatePushButton (rc_btn1, "Div", NULL, NULL);
++    XtAddCallback (eui.bt_div, XmNarmCallback, compute_aac_btn, (XtPointer) type_div);
++    XtAddCallback (eui.bt_div, XmNactivateCallback, compute_aac_btn, (XtPointer) type_div);
++    XtAddCallback (eui.bt_div, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_div);
++    XtManageChild (eui.bt_div);
++
+ 	CreateSeparator(rc_trans);
+ 	eui.formula_item = CreateScrollTextItem2(rc_trans, 3, "Formula:");
+ 
+@@ -147,6 +188,112 @@
+     unset_wait_cursor();
+ }
+ 
++//******************************************************
++/*
++ * Use buttons to evaluate a fixed formula
++ */
++static void compute_aac_btn(void *data, XtPointer client_data, XtPointer call_data)
++{
++    int aac_mode, error, resno;
++    int i, g1_ok, g2_ok, ns1, ns2, *svalues1, *svalues2,
++        gno1, gno2, setno1, setno2;
++    char fstr[256];
++    int restr_type, restr_negate;
++    char *rarray;
++
++    aac_mode = (int) data;
++
++    if (aac_mode == AAC_CLOSE) {
++        UnmanageChild(eui.top);
++        return;
++    }
++
++    set_wait_cursor();
++
++    int type = (int) client_data;
++
++    if (type == 1) {
++        strcat(strcpy(fstr,"y=y+"),GetTextString(amount_text));
++    } else if (type == 2) {
++        strcat(strcpy(fstr,"y=y-"),GetTextString(amount_text));
++    } else if (type == 3) {
++        strcat(strcpy(fstr,"y=y*"),GetTextString(amount_text));
++    } else if (type == 4) {
++        strcat(strcpy(fstr,"y=y/"),GetTextString(amount_text));
++    } else {
++        errmsg("Missing formula");
++    }
++
++
++    restr_type = GetOptionChoice(eui.restr_item->r_sel);
++    restr_negate = GetToggleButtonState(eui.restr_item->negate);
++
++    g1_ok = GetSingleListChoice(eui.srcdest->src->graph_sel, &gno1);
++    g2_ok = GetSingleListChoice(eui.srcdest->dest->graph_sel, &gno2);
++    ns1 = GetListChoices(eui.srcdest->src->set_sel, &svalues1);
++    ns2 = GetListChoices(eui.srcdest->dest->set_sel, &svalues2);
++
++    error = FALSE;
++    if (g1_ok == RETURN_FAILURE || g2_ok == RETURN_FAILURE) {
++        error = TRUE;
++        errmsg("Please select single source and destination graphs");
++    } else if (ns1 == 0) {
++        error = TRUE;
++        errmsg("No source sets selected");
++    } else if (ns1 != ns2 && ns2 != 0) {
++        error = TRUE;
++        errmsg("Different number of source and destination sets");
++    } else {
++
++        //strcpy(fstr, xv_getstr(formula));
++        for (i = 0; i < ns1; i++) {
++	    setno1 = svalues1[i];
++	    if (ns2 != 0) {
++                setno2 = svalues2[i];
++            } else {
++                setno2 = nextset(gno2);
++                set_set_hidden(gno2, setno2, FALSE);
++            }
++
++            resno = get_restriction_array(gno1, setno1,
++                restr_type, restr_negate, &rarray);
++	    if (resno != RETURN_SUCCESS) {
++	        errmsg("Error in evaluation restriction");
++	        break;
++	    }
++
++            resno = do_compute(gno1, setno1, gno2, setno2, rarray, fstr);
++	    XCFREE(rarray);
++	    if (resno != RETURN_SUCCESS) {
++	        errmsg("Error in do_compute(), check formula");
++                break;
++	    }
++        }
++    }
++
++    if (aac_mode == AAC_ACCEPT && error == FALSE) {
++        UnmanageChild(eui.top);
++    }
++
++    if (ns1 > 0) {
++        xfree(svalues1);
++    }
++    if (ns2 > 0) {
++        xfree(svalues2);
++    }
++    if (error == FALSE) {
++        if (gno1 != gno2) {
++            update_set_lists(gno1);
++            update_set_lists(gno2);
++        } else {
++            update_set_lists(gno1);
++        }
++        xdrawgraph();
++    }
++    unset_wait_cursor();
++}
++//******************************************************
++
+ /*
+  * evaluate a formula
+  */
+diff -Nru grace-5.1.25.orig/src/device.h grace-5.1.25/src/device.h
+--- grace-5.1.25.orig/src/device.h	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/device.h	2021-12-27 18:55:34.000000000 -0500
+@@ -43,6 +43,8 @@
+ #define MM_PER_INCH	25.4
+ #define CM_PER_INCH	(MM_PER_INCH/10)
+ 
++#define DEFAULT_RESOLUTION 300.0
++
+ /* hardcopy or terminal device */
+ /* device output can be redirected to file/printer(both) */
+ #define DEVICE_TERM	0
+diff -Nru grace-5.1.25.orig/src/draw.c grace-5.1.25/src/draw.c
+--- grace-5.1.25.orig/src/draw.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/draw.c	2021-12-27 18:55:32.000000000 -0500
+@@ -258,6 +258,12 @@
+     return (vp);
+ }
+ 
++WPoint Vpoint2Wpoint(VPoint vp)
++{
++    WPoint wp;
++    view2world(vp.x, vp.y, &wp.x, &wp.y);
++    return (wp);
++}
+ 
+ void symplus(VPoint vp, double s)
+ {
+diff -Nru grace-5.1.25.orig/src/draw.h grace-5.1.25/src/draw.h
+--- grace-5.1.25.orig/src/draw.h	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/draw.h	2021-12-27 18:55:32.000000000 -0500
+@@ -236,6 +236,7 @@
+ double xy_xconv(double wx);
+ double xy_yconv(double wy);
+ VPoint Wpoint2Vpoint(WPoint wp);
++WPoint Vpoint2Wpoint(VPoint vp);
+ int world2view(double x, double y, double *xv, double *yv);
+ void view2world(double xv, double yv, double *xw, double *yw);
+ 
+diff -Nru grace-5.1.25.orig/src/events.c grace-5.1.25/src/events.c
+--- grace-5.1.25.orig/src/events.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/events.c	2021-12-27 18:55:40.000000000 -0500
+@@ -111,6 +111,7 @@
+     int axisno;
+     Datapoint dpoint;
+     GLocator locator;
++    static char buf[256];
+     
+     cg = get_cg();
+     get_tracking_props(&track_setno, &move_dir, &add_at);
+@@ -487,6 +488,66 @@
+                 }
+                 select_line(anchor_x, anchor_y, x, y, 0);
+ 		break;
++	    case PEAK_POS:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Initial peak position, intensity: %f, %f \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		nonl_parms[1].value = Vpoint2Wpoint(vp).x;
++		nonl_parms[3].value = Vpoint2Wpoint(vp).y;
++		set_actioncb(NULL);
++		update_nonl_frame();
++		break;
++	    case PEAK_POS1:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Initial position, intensity peak #1: %f, %f \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		nonl_parms[1].value = Vpoint2Wpoint(vp).x;
++		nonl_parms[3].value = Vpoint2Wpoint(vp).y;
++		set_actioncb((void*) PEAK_POS2);
++		update_nonl_frame();
++		break;
++	    case PEAK_POS2:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Initial position, intensity peak #2: %f, %f \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		nonl_parms[4].value = Vpoint2Wpoint(vp).x;
++		nonl_parms[6].value = Vpoint2Wpoint(vp).y;
++		set_actioncb(NULL);
++		update_nonl_frame();
++		break;
++	    case PEAK_POS1B:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Initial position, intensity peak #1: %f, %f \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		nonl_parms[1].value = Vpoint2Wpoint(vp).x;
++		nonl_parms[3].value = Vpoint2Wpoint(vp).y;
++		set_actioncb((void*) PEAK_POS2B);
++		update_nonl_frame();
++		break;
++	    case PEAK_POS2B:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Initial position, intensity peak #2: %f, %f \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		nonl_parms[4].value = Vpoint2Wpoint(vp).x;
++		nonl_parms[6].value = Vpoint2Wpoint(vp).y;
++		set_actioncb((void*) PEAK_POS3B);
++		update_nonl_frame();
++		break;
++	    case PEAK_POS3B:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Initial position, intensity peak #3: %f, %f \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		nonl_parms[7].value = Vpoint2Wpoint(vp).x;
++		nonl_parms[9].value = Vpoint2Wpoint(vp).y;
++		set_actioncb(NULL);
++		update_nonl_frame();
++		break;
++	    case COORD_POS:
++		anchor_point(x, y, vp);
++		sprintf(buf, "Pointer position: %f, %f, \n", Vpoint2Wpoint(vp).x, Vpoint2Wpoint(vp).y);
++		stufftext(buf);
++		break;
++
+             default:
+                 break;
+             }
+@@ -567,6 +628,7 @@
+ void set_action(CanvasAction act)
+ {
+     int i;
++    static char buf[256];
+ /*
+  * indicate what's happening with a message in the left footer
+  */
+@@ -760,6 +822,46 @@
+ 	set_cursor(0);
+ 	set_left_footer("Pick ending point");
+ 	break;
++    case PEAK_POS:
++	set_cursor(0);
++	set_left_footer("Click on the approximate position of the maximum of the peak");
++	sprintf(buf, "Click on the approximate position of the maximum of the peak.\n");
++	stufftext(buf);
++	break;
++    case PEAK_POS1:
++	set_cursor(0);
++	set_left_footer("Click on the approximate position of the maximum of the peak #1");
++	sprintf(buf, "Click on the approximate position of the maximum of the peak #1.\n");
++	stufftext(buf);
++	break;
++    case PEAK_POS2:
++	set_cursor(0);
++	set_left_footer("Click on the approximate position of the maximum of the peak #2");
++	sprintf(buf, "Click on the approximate position of the maximum of the peak #2.\n");
++	stufftext(buf);
++	break;
++    case PEAK_POS1B:
++	set_cursor(0);
++	set_left_footer("Click on the approximate position of the maximum of the peak #1");
++	sprintf(buf, "Click on the approximate position of the maximum of the peak #1.\n");
++	stufftext(buf);
++	break;
++    case PEAK_POS2B:
++	set_cursor(0);
++	set_left_footer("Click on the approximate position of the maximum of the peak #2");
++	sprintf(buf, "Click on the approximate position of the maximum of the peak #2.\n");
++	stufftext(buf);
++	break;
++    case PEAK_POS3B:
++	set_cursor(0);
++	set_left_footer("Click on the approximate position of the maximum of the peak #3");
++	sprintf(buf, "Click on the approximate position of the maximum of the peak #3.\n");
++	stufftext(buf);
++	break;
++    case COORD_POS:
++	set_cursor(0);
++	set_left_footer("Click to determine the pointer's coordinates");
++	break;
+     }
+ 
+     action_flag = act;
+diff -Nru grace-5.1.25.orig/src/events.h grace-5.1.25/src/events.h
+--- grace-5.1.25.orig/src/events.h	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/events.h	2021-12-27 18:55:40.000000000 -0500
+@@ -81,7 +81,14 @@
+     ZOOMY_1ST,
+     ZOOMY_2ND,
+     DISLINE1ST,
+-    DISLINE2ND
++    DISLINE2ND,
++    PEAK_POS,
++    PEAK_POS1,
++    PEAK_POS2,
++    PEAK_POS1B,
++    PEAK_POS2B,
++    PEAK_POS3B,
++    COORD_POS
+ } CanvasAction;
+ 
+ /* add points at */
+diff -Nru grace-5.1.25.orig/src/graphutils.h grace-5.1.25/src/graphutils.h
+--- grace-5.1.25.orig/src/graphutils.h	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/graphutils.h	2021-12-27 18:55:50.000000000 -0500
+@@ -55,7 +55,8 @@
+ #define GA_ORDER_HV_INV 4
+ 
+ /* Default page offsets and gaps for graph arranging */
+-#define GA_OFFSET_DEFAULT    0.15
++#define GA_OFFSET_DEFAULT_1    0.10
++#define GA_OFFSET_DEFAULT_2    0.05
+ #define GA_GAP_DEFAULT       0.2
+ 
+ char *get_format_types(int f);
+diff -Nru grace-5.1.25.orig/src/mfdrv.c grace-5.1.25/src/mfdrv.c
+--- grace-5.1.25.orig/src/mfdrv.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/mfdrv.c	2021-12-27 18:55:34.000000000 -0500
+@@ -53,7 +53,7 @@
+           "gmf",
+           TRUE,
+           FALSE,
+-          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, 72.0},
++          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, DEFAULT_RESOLUTION},
+           NULL
+          };
+ 
+diff -Nru grace-5.1.25.orig/src/mifdrv.c grace-5.1.25/src/mifdrv.c
+--- grace-5.1.25.orig/src/mifdrv.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/mifdrv.c	2021-12-27 18:55:34.000000000 -0500
+@@ -56,7 +56,7 @@
+                                "mif",
+                                TRUE,
+                                FALSE,
+-                               {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, 72.0},
++                               {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, DEFAULT_RESOLUTION},
+                                NULL
+                               };
+ 
+diff -Nru grace-5.1.25.orig/src/motifinc.h grace-5.1.25/src/motifinc.h
+--- grace-5.1.25.orig/src/motifinc.h	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/motifinc.h	2021-12-27 18:55:29.000000000 -0500
+@@ -450,4 +450,6 @@
+ void savewidget(Widget w);
+ void deletewidget(Widget w);
+ 
++void FixWidgetSize(Widget w);
++
+ #endif /* __MOTIFINC_H_ */
+diff -Nru grace-5.1.25.orig/src/motifutils.c grace-5.1.25/src/motifutils.c
+--- grace-5.1.25.orig/src/motifutils.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/motifutils.c	2021-12-27 18:55:56.000000000 -0500
+@@ -1065,7 +1065,7 @@
+     xfree(bufp);
+     
+     xmstr = XmStringCreateLocalized(get_workingdir());
+-    XtVaSetValues(retval->FSB, XmNdirectory, xmstr, NULL);
++    XtVaSetValues(retval->FSB, XmNdirectory, xmstr, XmNmarginHeight, 0, NULL);
+     XmStringFree(xmstr);
+     
+     XtAddCallback(retval->FSB,
+@@ -2452,7 +2452,7 @@
+     }
+     
+     sdata->standalone = standalone;
+-    sdata->view_comments = FALSE;
++    sdata->view_comments = TRUE;
+     sdata->show_hidden = TRUE;
+     sdata->show_nodata = FALSE;
+     sdata->menu = CreateSetPopupEntries(retvalp);
+@@ -4198,3 +4198,28 @@
+ {
+     update_all();
+ }
++
++/* Make a widget non-resizable, so that buttons and controls cannot be obscured;
++   also prevents some display errors when a dialog is shrunk and then expanded.
++   See http://bugs.debian.org/253087
++*/
++void FixWidgetSize(Widget w)
++{
++    Display *display = XtDisplay(XtParent(w));
++    Window window = XtWindow(XtParent(w));
++    XSizeHints sizeHint = *XAllocSizeHints();
++    Window root;
++    int x, y;
++    unsigned int width, height, border, depth;
++
++    XGetGeometry(display, window, &root, &x, &y, &width, &height, &border, &depth);
++
++    sizeHint.min_width = width;
++    sizeHint.min_height = height;
++    sizeHint.max_width = width;
++    sizeHint.max_height = height;
++    sizeHint.flags = PMinSize | PMaxSize;
++
++    XSetWMNormalHints(display, window, &sizeHint);
++}
++
+diff -Nru grace-5.1.25.orig/src/nonlwin.c grace-5.1.25/src/nonlwin.c
+--- grace-5.1.25.orig/src/nonlwin.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/nonlwin.c	2021-12-27 18:55:32.000000000 -0500
+@@ -7,6 +7,7 @@
+  * Copyright (c) 1996-2000 Grace Development Team
+  * 
+  * Maintained by Evgeny Stambulchik
++ * Additional non linear fitting functions by Nicola Ferralis
+  * 
+  * 
+  *                           All Rights Reserved
+@@ -47,6 +48,7 @@
+ #include "parser.h"
+ #include "motifinc.h"
+ #include "protos.h"
++#include "events.h"
+ 
+ /* nonlprefs.load possible values */
+ #define LOAD_VALUES         0
+@@ -98,6 +100,34 @@
+ static void nonl_wf_cb(int value, void *data);
+ static void do_constr_toggle(int onoff, void *data);
+ 
++static void nonl_Lorentzian_cb(void *data);
++static void nonl_doubleLorentzian_cb(void *data);
++static void nonl_tripleLorentzian_cb(void *data);
++static void nonl_Gaussian_cb(void *data);
++static void nonl_doubleGaussian_cb(void *data);
++static void nonl_tripleGaussian_cb(void *data);
++static void nonl_Gaussian2_cb(void *data);
++static void nonl_PsVoight1_cb(void *data);
++static void nonl_PsVoight2_cb(void *data);
++static void nonl_DS_cb(void *data);
++static void nonl_Asym2Sig_cb(void *data);
++static void nonl_LogNormal_cb(void *data);
++static void nonl_GCAS_cb(void *data);
++static void nonl_ECS_cb(void *data);
++static void nonl_InvPoly_cb(void *data);
++static void nonl_Sine_cb(void *data);
++static void nonl_Sinesq_cb(void *data);
++static void nonl_Sinedamp_cb(void *data);
++static void nonl_ExpDec1_cb(void *data);
++static void nonl_ExpDec2_cb(void *data);
++static void nonl_ExpGrow1_cb(void *data);
++static void nonl_ExpGrow2_cb(void *data);
++static void nonl_Hyperbol_cb(void *data);
++static void nonl_Bradley_cb(void *data);
++static void nonl_Log3_cb(void *data);
++static void nonl_WeibullPD_cb(void *data);
++static void nonl_WeibullCD_cb(void *data);
++
+ static void update_nonl_frame_cb(void *data);
+ static void reset_nonl_frame_cb(void *data);
+ 
+@@ -118,7 +148,7 @@
+     if (nonl_frame == NULL) {
+         int i;
+         OptionItem np_option_items[MAXPARM + 1], option_items[5];
+-        Widget menubar, menupane;
++        Widget menubar, menupane, submenugauss, submenulorentz, submenupeak, submenubaseline, submenuperiodic;
+         Widget nonl_tab, nonl_main, nonl_advanced;
+         Widget sw, title_fr, fr3, rc1, rc2, rc3, lab;
+ 
+@@ -145,6 +175,54 @@
+         CreateMenuSeparator(menupane);
+         CreateMenuButton(menupane, "Update", 'U', update_nonl_frame_cb, NULL);
+ 
++	menupane = CreateMenu(menubar, "Library", 'L', FALSE);
++
++	submenugauss = CreateMenu(menupane, "Gaussian Functions", 'G', FALSE);
++	CreateMenuButton(submenugauss, "Single", 'g', nonl_Gaussian_cb, NULL);
++	CreateMenuButton(submenugauss, "Double", 'D', nonl_doubleGaussian_cb, NULL);
++	CreateMenuButton(submenugauss, "Triple", 'T', nonl_tripleGaussian_cb, NULL);
++	CreateMenuSeparator(submenugauss);
++	CreateMenuButton(submenugauss, "Single (chromatography)", 'c', nonl_Gaussian2_cb, NULL);
++	CreateMenuSeparator(menupane);
++
++	submenulorentz = CreateMenu(menupane, "Lorentzian Functions", 'L', FALSE);
++	CreateMenuButton(submenulorentz, "Single", 'S', nonl_Lorentzian_cb, NULL);
++	CreateMenuButton(submenulorentz, "Double", 'D', nonl_doubleLorentzian_cb, NULL);
++	CreateMenuButton(submenulorentz, "Triple", 'T', nonl_tripleLorentzian_cb, NULL);
++	CreateMenuSeparator(menupane);
++
++	submenupeak = CreateMenu(menupane, "Peak Functions", 'P', FALSE);
++	CreateMenuButton(submenupeak, "Pseudo Voigt 1", 'V', nonl_PsVoight1_cb, NULL);
++	CreateMenuButton(submenupeak, "Pseudo Voigt 2", 'o', nonl_PsVoight2_cb, NULL);
++	CreateMenuButton(submenupeak, "Doniach-Sunjic", 'D', nonl_DS_cb, NULL);
++	CreateMenuButton(submenupeak, "Asymmetric Double Sigmoidal", 'S', nonl_Asym2Sig_cb, NULL);
++	CreateMenuButton(submenupeak, "LogNormal", 'L', nonl_LogNormal_cb, NULL);
++	CreateMenuButton(submenupeak, "Gram-Charlier A-Series", 'C', nonl_GCAS_cb, NULL);
++	CreateMenuButton(submenupeak, "Edgeworth-Cramer Series", 'E', nonl_ECS_cb, NULL);
++	CreateMenuButton(submenupeak, "Inverse Polynomial", 'I', nonl_InvPoly_cb, NULL);
++	CreateMenuSeparator(menupane);
++
++	submenuperiodic = CreateMenu(menupane, "Periodic Peak Functions", 'e', FALSE);
++	CreateMenuButton(submenuperiodic, "Sine", 'S', nonl_Sine_cb, NULL);
++	CreateMenuButton(submenuperiodic, "Sine Square", 'q', nonl_Sinesq_cb, NULL);
++	CreateMenuButton(submenuperiodic, "Sine Damp", 'D', nonl_Sinedamp_cb, NULL);
++	CreateMenuSeparator(menupane);
++
++	submenubaseline = CreateMenu(menupane, "Baseline Functions", 'B', FALSE);
++	CreateMenuButton(submenubaseline, "Exponential Decay 1", 'D', nonl_ExpDec1_cb, NULL);
++	CreateMenuButton(submenubaseline, "Exponential Decay 2", 'e', nonl_ExpDec2_cb, NULL);
++	CreateMenuButton(submenubaseline, "Exponential Growth 1", 'G', nonl_ExpGrow1_cb, NULL);
++	CreateMenuButton(submenubaseline, "Exponential Growth 2", 'r', nonl_ExpGrow2_cb, NULL);
++	CreateMenuButton(submenubaseline, "Hyperbolic Function", 'H', nonl_Hyperbol_cb, NULL);
++	CreateMenuSeparator(submenubaseline);
++	CreateMenuButton(submenubaseline, "Bradley", 'B', nonl_Bradley_cb, NULL);
++	CreateMenuButton(submenubaseline, "Logarithm 3", 'L', nonl_Log3_cb, NULL);
++	CreateMenuSeparator(submenubaseline);
++	CreateMenuButton(submenubaseline, "Weibull Probability Density", 'W', nonl_WeibullPD_cb, NULL);
++	CreateMenuButton(submenubaseline, "Weibull Cumulative", 'w', nonl_WeibullCD_cb, NULL);
++	CreateMenuSeparator(menupane);
++
++	CreateMenuButton(menupane, "Reset fit parameters", 'R', reset_nonl_frame_cb, NULL);
+         menupane = CreateMenu(menubar, "Help", 'H', TRUE);
+ 
+         CreateMenuHelpButton(menupane, "On fit", 'f',
+@@ -190,7 +268,7 @@
+         
+ 	sw = XtVaCreateManagedWidget("sw",
+ 				     xmScrolledWindowWidgetClass, nonl_main,
+-				     XmNheight, 180,
++				     XmNheight, 140,
+ 				     XmNscrollingPolicy, XmAUTOMATIC,
+ 				     NULL);
+ 
+@@ -712,3 +790,343 @@
+     }
+     return TRUE;
+ }
++
++
++static void nonl_Lorentzian_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Lorentzian function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + (2*A2*A3/pi)/(4*(x-A1)^2 + A2^2)");
++    nonl_opts.parnum = 4;
++
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Full width at half maximum\nA3: Peak area\n\n");
++    stufftext(buf);
++
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_doubleLorentzian_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Double Lorentzian function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + (2*A2*A3/pi)/(4*(x-A1)^2 + A2^2) + (2*A5*A6/pi)/(4*(x-A4)^2 + A5^2)");
++    nonl_opts.parnum = 7;
++
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++
++    sprintf(buf, "A0: Baseline offset\nA1, A4: Center of peaks 1, 2\nA2, A5: Full width at half maximum of peaks 1, 2\nA3, A6: Area of peaks 1, 2\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS1);
++    update_nonl_frame();
++}
++
++static void nonl_tripleLorentzian_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Double Lorentzian function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + (2*A2*A3/pi)/(4*(x-A1)^2 + A2^2) + (2*A5*A6/pi)/(4*(x-A4)^2 + A5^2) + (2*A8*A9/pi)/(4*(x-A7)^2 + A8^2)");
++    nonl_opts.parnum = 10;
++
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++
++    sprintf(buf, "A0: Baseline offset\nA1, A4, A7: Center of peaks 1, 2, 3\nA2, A5, A7: Full width at half maximum of peaks 1, 2, 3\nA3, A6, A9: Area of peaks 1, 2, 3\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS1B);
++    update_nonl_frame();
++}
++
++static void nonl_Gaussian_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Gaussian function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + (A3*2*sqrt(ln(2)/pi)/A2)*exp(-4*ln(2)*((x-A1)/A2)^2)");
++    nonl_opts.parnum = 4;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Full width at half maximum\nA3: Peak area\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_doubleGaussian_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Double Gaussian function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + (A3*2*sqrt(ln(2)/pi)/A2)*exp(-4*ln(2)*((x-A1)/A2)^2) + (A6*2*sqrt(ln(2)/pi)/A5)*exp(-4*ln(2)*((x-A4)/A5)^2)");
++    nonl_opts.parnum = 7;
++
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++
++    sprintf(buf, "A0: Baseline offset\nA1, A4: Center of peaks 1, 2\nA2, A5: Full width at half maximum of peaks 1, 2\nA3, A6: Area of peaks 1, 2\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS1);
++    update_nonl_frame();
++}
++
++static void nonl_tripleGaussian_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Double Gaussian function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + (A3*2*sqrt(ln(2)/pi)/A2)*exp(-4*ln(2)*((x-A1)/A2)^2) + (A6*2*sqrt(ln(2)/pi)/A5)*exp(-4*ln(2)*((x-A4)/A5)^2)+ (A9*2*sqrt(ln(2)/pi)/A8)*exp(-4*ln(2)*((x-A7)/A8)^2)");
++    nonl_opts.parnum = 10;
++
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++
++    sprintf(buf, "A0: Baseline offset\nA1, A4, A7: Center of peaks 1, 2, 3\nA2, A5, A8: Full width at half maximum of peaks 1, 2, 3\nA3, A6, A9: Area of peaks 1, 2, 3\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS1B);
++    update_nonl_frame();
++}
++
++static void nonl_Gaussian2_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Gaussian (chromatography) function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + (1/sqrt(2*pi))*(A3/A2)*exp(-(x-A1)^2/2*A2^2)");
++    nonl_opts.parnum = 4;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak (retention time)\nA2: Standard deviation of the peak\nA3: Peak area\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_PsVoight1_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Pseudo Voigt 1 function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + A3 * (A4*(2/pi)*A2/(4*(x-A1)^2+A2^2) + (1-A4)*exp(-4*ln(2)*(x-A1)^2/A2^2)*(sqrt(4*ln(2))/(A2*sqrt(pi))))");
++    nonl_opts.parnum = 5;
++    for (i=0; i<nonl_opts.parnum-1; i++)
++	{nonl_parms[i].value=1;}
++    nonl_parms[4].value=0.5;
++    sprintf(buf, "Gaussian and Lorentzian have the same width\nA0: Baseline offset\nA1: Center of the peak\nA2: Full width at half maximum\nA3: Amplitude\nA4: Profile shape factor \n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_PsVoight2_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Pseudo Voigt 2 function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + A3 * (A5*(2/pi)*A2/(4*(x-A1)^2+A2^2) + (1-A5)*exp(-4*ln(2)*(x-A1)^2/A4^2)*(sqrt(4*ln(2))/(A2*sqrt(pi))))");
++    nonl_opts.parnum = 6;
++    for (i=0; i<nonl_opts.parnum-1; i++)
++	{nonl_parms[i].value=1;}
++    nonl_parms[5].value=0.5;
++    sprintf(buf, "Gaussian and Lorentzian have different width\nA0: Baseline offset\nA1: Center of the peak\nA2: Full width at half maximum (Lorentzian)\nA3: Amplitude\nA4: Full width at half maximum (Gaussian) \nA5: Profile shape factor \n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_DS_cb(void *data)
++{   nonl_opts.title   = copy_string(nonl_opts.title, "Doniach-Sunjic function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + A3*cos((pi*A4/2)+(1-A4)*atan((x-A1)/A2))/(A2^2+(x-A1)^2)^((1-A4)/2)");
++    nonl_opts.parnum = 5;
++
++    nonl_parms[0].value=1;
++    nonl_parms[2].value=1;
++    nonl_parms[4].value=0.5;
++
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Full width at half maximum\nA3: Peak area\nA4: Asymmetry parameter \n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_Asym2Sig_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Asymmetric double sigmoidal function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + A3*(1/(1+exp(-(x-A1+A2/2)/A4)))*(1-(1/(1+exp(-(x-A1-A2/2)/A5))))");
++    nonl_opts.parnum = 6;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Width 1\nA3: Amplitude\nA4: Width 2\nA5: Width 5 \n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_LogNormal_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Log Normal Function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + A3*exp(-((ln(x)-ln(A1))^2)/(2*A2))");
++    nonl_opts.parnum = 4;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Width\nA3: Amplitude\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_GCAS_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Gram-Charlier A-Series");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + A3/(A2*sqrt(2*pi))*exp(-0.5*((x-A1)/A2)^2)*(1+(A4/6)*(((x-A1)/A2)^3-3*(x-A1)/A2)+(A5/24)*(((x-A1)/A2)^4-6*((x-A1)/A2)^3+3))");
++    nonl_opts.parnum = 5;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Standard deviation\nA3: Peak Area\nA4: Skew\nA5: Excess\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_ECS_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Edgeworth-Cramer Series");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y = A0 + A3/(A2*sqrt(2*pi))*exp(-0.5*((x-A1)/A2)^2)*(1+(A4/6)*(((x-A1)/A2)^3-3*(x-A1)/A2)+(A5/24)*(((x-A1)/A2)^4-6*((x-A1)/A2)^3+3) + (A5^2/720)*(((x-A1)/A2)^6-15*((x-A1)/A2)^4+45*((x-A1)/A2)^2-15))");
++    nonl_opts.parnum = 5;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Standard deviation\nA3: Peak Area\nA4: Skew\nA5: Excess\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_InvPoly_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Inverse Polynomial Function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3/(1+ A4*(2*(x-A1)/A2)^2 + A5*(2*(x-A1)/A2)^4 + A6*(2*(x-A1)/A2)^6)");
++    nonl_opts.parnum = 7;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center of the peak\nA2: Standard deviation\nA3: Peak Area\nA4, A5, A6: Parameters\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_Sine_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Sine Function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3*sin(pi*(x-A1)/A2)");
++    nonl_opts.parnum = 4;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center\nA2: Width\nA3: Amplitude\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_Sinesq_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Sine Function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3*(sin(pi*(x-A1)/A2))^2");
++    nonl_opts.parnum = 4;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center\nA2: Width\nA3: Amplitude\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_Sinedamp_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Sine Function");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3*exp(-x/A4)*sin(pi*(x-A1)/A2)");
++    nonl_opts.parnum = 5;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    sprintf(buf, "A0: Baseline offset\nA1: Center\nA2: Width\nA3: Amplitude\nA4: Decay time\n\n");
++    stufftext(buf);
++    set_actioncb( (void *) PEAK_POS);
++    update_nonl_frame();
++}
++
++static void nonl_ExpDec1_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Exponential Decay 1");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3*exp(-(x-A1)/A2)");
++    nonl_opts.parnum = 4;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_ExpDec2_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Exponential Decay 2");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3*exp(-(x-A1)/A2)+A6*exp(-(x-A4)/A5)");
++    nonl_opts.parnum = 7;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_ExpGrow1_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Exponential Growth 1");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3*exp((x-A1)/A2)");
++    nonl_opts.parnum = 4;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_ExpGrow2_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Exponential Growth 2");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+A3*exp((x-A1)/A2)+A6*exp((x-A4)/A5)");
++    nonl_opts.parnum = 7;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_Hyperbol_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Hyperbolic");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0+(A1*x)/(A2+x)");
++    nonl_opts.parnum = 3;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_Bradley_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Bradley");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0*ln(-A1*ln(x))");
++    nonl_opts.parnum = 2;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_Log3_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Logarithm 3");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=A0-A1*ln(x+A2)");
++    nonl_opts.parnum = 3;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_WeibullPD_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Weibull Probability Density");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=(A0/A1)*((x/A1)^(A0-1))*exp(-(x/A1)^A0)");
++    nonl_opts.parnum = 2;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
++
++static void nonl_WeibullCD_cb(void *data)
++{   int i;
++    nonl_opts.title   = copy_string(nonl_opts.title, "Weibull Cumulative Distribution");
++    nonl_opts.formula = copy_string(nonl_opts.formula, "y=1-exp(-(x/A1)^A0)");
++    nonl_opts.parnum = 2;
++    for (i=0; i<nonl_opts.parnum; i++)
++	{nonl_parms[i].value=1;}
++    update_nonl_frame();
++}
+diff -Nru grace-5.1.25.orig/src/rstdrv.c grace-5.1.25/src/rstdrv.c
+--- grace-5.1.25.orig/src/rstdrv.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/rstdrv.c	2021-12-27 18:55:34.000000000 -0500
+@@ -108,7 +108,7 @@
+           "pnm",
+           FALSE,
+           TRUE,
+-          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, 72.0},
++          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, DEFAULT_RESOLUTION},
+           NULL
+          };
+ 
+@@ -121,7 +121,7 @@
+           "jpg",
+           FALSE,
+           TRUE,
+-          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, 72.0},
++          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, DEFAULT_RESOLUTION},
+           NULL
+          };
+ #endif
+@@ -135,7 +135,7 @@
+           "png",
+           FALSE,
+           TRUE,
+-          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, 72.0},
++          {DEFAULT_PAGE_WIDTH, DEFAULT_PAGE_HEIGHT, DEFAULT_RESOLUTION},
+           NULL
+          };
+ #endif
+diff -Nru grace-5.1.25.orig/src/setappwin.c grace-5.1.25/src/setappwin.c
+--- grace-5.1.25.orig/src/setappwin.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/setappwin.c	2021-12-27 18:55:29.000000000 -0500
+@@ -399,6 +399,8 @@
+ 
+ 
+         CreateAACDialog(setapp_dialog, setapp_tab, setapp_aac_cb, NULL);
++
++	FixWidgetSize(setapp_dialog);
+     }
+     updatesymbols(cg, cset);
+     
+diff -Nru grace-5.1.25.orig/src/strwin.c grace-5.1.25/src/strwin.c
+--- grace-5.1.25.orig/src/strwin.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/strwin.c	2021-12-27 18:55:26.000000000 -0500
+@@ -939,7 +939,7 @@
+ 	line_ui.y2_item = CreateTextItem2(rc, 12, "Y2 = ");
+ 	ManageChild(rc);
+ 
+-	CreateSeparator(panel);
++	//CreateSeparator(panel);
+ 
+ 	CreateCommandButtons(panel, 2, buts, label1);
+ 	XtAddCallback(buts[0], XmNactivateCallback,
+diff -Nru grace-5.1.25.orig/src/tickwin.c grace-5.1.25/src/tickwin.c
+--- grace-5.1.25.orig/src/tickwin.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/tickwin.c	2021-12-27 18:55:29.000000000 -0500
+@@ -454,6 +454,9 @@
+             int maxval;
+             XtVaGetValues(vbar, XmNmaximum, &maxval, NULL);
+             XtVaSetValues(vbar, XmNincrement, (int) rint(maxval/MAX_TICKS), NULL);
++
++	/* prevent dialog from shrinking */
++	FixWidgetSize(axes_dialog);
+         }
+     }
+     update_ticks(cg);
+diff -Nru grace-5.1.25.orig/src/worldwin.c grace-5.1.25/src/worldwin.c
+--- grace-5.1.25.orig/src/worldwin.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/worldwin.c	2021-12-27 18:55:50.000000000 -0500
+@@ -240,10 +240,10 @@
+         SetSpinChoice(ui->nrows, (double) 1);
+         SetSpinChoice(ui->ncols, (double) 1);
+         
+-        SetSpinChoice(ui->toff, GA_OFFSET_DEFAULT);
+-        SetSpinChoice(ui->loff, GA_OFFSET_DEFAULT);
+-        SetSpinChoice(ui->roff, GA_OFFSET_DEFAULT);
+-        SetSpinChoice(ui->boff, GA_OFFSET_DEFAULT);
++        SetSpinChoice(ui->toff, GA_OFFSET_DEFAULT_2);
++        SetSpinChoice(ui->loff, GA_OFFSET_DEFAULT_1);
++        SetSpinChoice(ui->roff, GA_OFFSET_DEFAULT_2);
++        SetSpinChoice(ui->boff, GA_OFFSET_DEFAULT_1);
+ 
+         SetSpinChoice(ui->hgap, GA_GAP_DEFAULT);
+         SetSpinChoice(ui->vgap, GA_GAP_DEFAULT);
+diff -Nru grace-5.1.25.orig/src/xmgrace.c grace-5.1.25/src/xmgrace.c
+--- grace-5.1.25.orig/src/xmgrace.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/xmgrace.c	2021-12-27 18:55:42.000000000 -0500
+@@ -264,8 +264,8 @@
+ };
+ 
+ String fallbackResourcesHighRes[] = {
+-    "XMgrace*mainWin.width: 680",
+-    "XMgrace*mainWin.height: 700",
++    "XMgrace*mainWin.width: 1150",
++    "XMgrace*mainWin.height: 900",
+     "XMgrace*fontList:-*-helvetica-medium-r-normal-*-12-*-*-*-*-*-*-*",
+     "XMgrace.consoleDialog*text.fontList:-*-courier-medium-r-normal-*-12-*-*-*-*-*-*-*",
+     "XMgrace*HContainer.marginHeight: 3",
+@@ -274,7 +274,7 @@
+ };
+ 
+ String fallbackResourcesLowRes[] = {
+-    "XMgrace*mainWin.width: 530",
++    "XMgrace*mainWin.width: 1000",
+     "XMgrace*mainWin.height: 545",
+     "XMgrace*fontList:-*-helvetica-medium-r-normal-*-8-*-*-*-*-*-*-*",
+     "XMgrace.consoleDialog*text.fontList:-*-courier-medium-r-normal-*-8-*-*-*-*-*-*-*",
+@@ -882,6 +882,10 @@
+ /*
+  *     CreateMenuButton(menupane, "Area/perimeter...", 'A', create_area_frame, NULL);
+  */
++
++    submenupane = CreateMenu(menupane, "Coordinate pointer", 'p', FALSE);
++    CreateMenuButton(submenupane, "Click and Show", 'C', set_actioncb, (void *) COORD_POS);
++    CreateMenuButton(submenupane, "Stop", 'S', set_actioncb, NULL); 
+     CreateMenuButton(menupane, "Console", 'l', create_monitor_frame_cb, NULL);
+     
+ 
+@@ -970,7 +974,7 @@
+  */
+ void startup_gui(void)
+ {
+-    Widget bt, rc3, rcleft;
++    Widget bt, rc2, rc3, rcleft;
+     Pixmap icon, shape;
+ 
+ /* 
+@@ -1129,14 +1133,44 @@
+     bt = CreateBitmapButton(rc3, 16, 16, up_bits);
+     AddButtonCB(bt, graph_scroll_proc, (void *) GSCROLL_UP);
+ 
+-    CreateSeparator(rcleft);
+-
+     bt = CreateButton(rcleft, "AutoT");
+     AddButtonCB(bt, autoticks_proc, NULL);
+ 
+     bt = CreateButton(rcleft, "AutoO");
+     AddButtonCB(bt, autoon_proc, NULL);
+ 
++    CreateSeparator(rcleft);
++
++    bt = CreateButton(rcleft, "Imp ASCII");
++    AddButtonCB(bt, create_file_popup, NULL);
++
++    bt = CreateButton(rcleft, "Exp ASCII");
++    AddButtonCB(bt, create_write_popup, NULL);
++
++    bt = CreateButton(rcleft, "Print set");
++    AddButtonCB(bt, create_printer_setup, NULL);
++
++    CreateSeparator(rcleft);
++
++    rc2 = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass, rcleft,
++				  XmNorientation, XmHORIZONTAL,
++				  XmNpacking, XmPACK_COLUMN,
++				  XmNnumColumns, 2,
++				  XmNspacing, 0,
++				  XmNentryBorder, 0,
++				  NULL);
++    bt = CreateButton(rc2, "Ev");
++    AddButtonCB(bt, create_eval_frame, NULL);
++    bt = CreateButton(rc2, "Re");
++    AddButtonCB(bt, create_define_frame, NULL);
++
++    bt = CreateButton(rc2, "Rg");
++    AddButtonCB(bt, create_reg_frame, NULL);
++    bt = CreateButton(rc2, "NL");
++    AddButtonCB(bt, create_nonl_frame, NULL);
++    
++    CreateSeparator(rcleft);
++
+     rc3 = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass, rcleft,
+ 				  XmNorientation, XmHORIZONTAL,
+ 				  XmNpacking, XmPACK_COLUMN,
+@@ -1167,6 +1201,9 @@
+     stack_depth_item = CreateLabel(rcleft, "");
+     curw_item = CreateLabel(rcleft, "");
+ 
++    bt = CreateButton(rcleft, "Objects");
++    AddButtonCB(bt, define_objects_popup, NULL);
++
+     bt = CreateButton(rcleft, "Exit");
+     AddButtonCB(bt, MenuCB, (void *) MENU_EXIT);
+ 
+diff -Nru grace-5.1.25.orig/templates/Default.agr grace-5.1.25/templates/Default.agr
+--- grace-5.1.25.orig/templates/Default.agr	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/templates/Default.agr	2021-12-27 18:55:50.000000000 -0500
+@@ -104,7 +104,7 @@
+ @    world 0, 0, 1, 1
+ @    stack world 0, 0, 0, 0
+ @    znorm 1
+-@    view 0.150000, 0.150000, 1.150000, 0.850000
++@    view 0.100000, 0.100000, 1.244747, 0.950000
+ @    title ""
+ @    title font 0
+ @    title size 1.500000

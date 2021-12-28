@@ -1,0 +1,12 @@
+diff -Nru grace-5.1.25.orig/src/motifutils.c grace-5.1.25/src/motifutils.c
+--- grace-5.1.25.orig/src/motifutils.c	2021-12-27 18:38:48.000000000 -0500
++++ grace-5.1.25/src/motifutils.c	2021-12-27 18:40:22.000000000 -0500
+@@ -2452,7 +2452,7 @@
+     }
+     
+     sdata->standalone = standalone;
+-    sdata->view_comments = FALSE;
++    sdata->view_comments = TRUE;
+     sdata->show_hidden = TRUE;
+     sdata->show_nodata = FALSE;
+     sdata->menu = CreateSetPopupEntries(retvalp);

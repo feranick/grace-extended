@@ -1,6 +1,6 @@
 diff -Nru grace-5.1.25.orig/T1lib/t1lib/t1base.c grace-5.1.25/T1lib/t1lib/t1base.c
---- grace-5.1.25.orig/T1lib/t1lib/t1base.c	2004-04-13 16:27:44.000000000 -0400
-+++ grace-5.1.25/T1lib/t1lib/t1base.c	2020-03-31 19:07:45.000000000 -0400
+--- grace-5.1.25.orig/T1lib/t1lib/t1base.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/T1lib/t1lib/t1base.c	2021-12-27 19:07:02.000000000 -0500
 @@ -653,7 +653,7 @@
   
  
@@ -29,8 +29,8 @@ diff -Nru grace-5.1.25.orig/T1lib/t1lib/t1base.c grace-5.1.25/T1lib/t1lib/t1base
    buffer[i+1]='p';
    buffer[i+2]='f';
 diff -Nru grace-5.1.25.orig/ac-tools/configure.in grace-5.1.25/ac-tools/configure.in
---- grace-5.1.25.orig/ac-tools/configure.in	2014-08-16 17:56:08.000000000 -0400
-+++ grace-5.1.25/ac-tools/configure.in	2020-03-31 19:07:37.000000000 -0400
+--- grace-5.1.25.orig/ac-tools/configure.in	2021-12-27 17:31:43.000000000 -0500
++++ grace-5.1.25/ac-tools/configure.in	2021-12-27 19:07:15.000000000 -0500
 @@ -283,7 +283,7 @@
      dnl **** default settings for gcc
      DEBUG="-g -O2"
@@ -40,9 +40,50 @@ diff -Nru grace-5.1.25.orig/ac-tools/configure.in grace-5.1.25/ac-tools/configur
  
      dnl **** check for strength-reduce bug
      ACX_GCC_STRENGTH_REDUCE(CFLAGS="$CFLAGS -fno-strength-reduce")
+diff -Nru grace-5.1.25.orig/src/svgdrv.c grace-5.1.25/src/svgdrv.c
+--- grace-5.1.25.orig/src/svgdrv.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/svgdrv.c	2021-12-27 19:07:08.000000000 -0500
+@@ -745,7 +745,7 @@
+             -tm->cxy, -tm->cyy,
+             scaleval(vp.x), scaleval(vp.y));
+ 
+-    fprintf(prstream, escape_specials((unsigned char *) s, len));
++    fprintf(prstream, "%s", escape_specials((unsigned char *) s, len));
+ 
+     fprintf(prstream, "</text>\n");
+ }
+diff -Nru grace-5.1.25.orig/src/utils.c grace-5.1.25/src/utils.c
+--- grace-5.1.25.orig/src/utils.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/utils.c	2021-12-27 19:07:08.000000000 -0500
+@@ -1171,12 +1171,12 @@
+     if (inwin) {
+         stufftextwin(s);
+     } else {
+-        printf(s);
++        printf("%s", s);
+     }
+ #endif
+     /* log results to file */
+     if (resfp != NULL) {
+-	fprintf(resfp, s);
++	fprintf(resfp, "%s", s);
+     }
+ }
+ 
+@@ -1222,7 +1222,9 @@
+     char buf[GR_MAXPATHLEN];
+     
+     if (wd == NULL) {
+-        getcwd(workingdir, GR_MAXPATHLEN - 1);
++        if (getcwd(workingdir, GR_MAXPATHLEN - 1) == NULL) {
++	    return RETURN_FAILURE;
++        }
+         if (workingdir[strlen(workingdir)-1] != '/') {
+             strcat(workingdir, "/");
+         }
 diff -Nru grace-5.1.25.orig/src/xmgrace.c grace-5.1.25/src/xmgrace.c
---- grace-5.1.25.orig/src/xmgrace.c	2014-08-29 12:38:21.000000000 -0400
-+++ grace-5.1.25/src/xmgrace.c	2020-03-31 19:07:40.000000000 -0400
+--- grace-5.1.25.orig/src/xmgrace.c	2021-12-27 17:31:44.000000000 -0500
++++ grace-5.1.25/src/xmgrace.c	2021-12-27 19:06:56.000000000 -0500
 @@ -211,7 +211,7 @@
  String fallbackResourcesCommon[] = {
      "XMgrace.consoleDialog*text.columns: 72",

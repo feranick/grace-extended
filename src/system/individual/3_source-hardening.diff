@@ -1,0 +1,41 @@
+diff -Nru grace-5.1.25.orig/src/svgdrv.c grace-5.1.25/src/svgdrv.c
+--- grace-5.1.25.orig/src/svgdrv.c	2021-12-27 17:16:03.000000000 -0500
++++ grace-5.1.25/src/svgdrv.c	2021-12-27 17:22:52.000000000 -0500
+@@ -745,7 +745,7 @@
+             -tm->cxy, -tm->cyy,
+             scaleval(vp.x), scaleval(vp.y));
+ 
+-    fprintf(prstream, escape_specials((unsigned char *) s, len));
++    fprintf(prstream, "%s", escape_specials((unsigned char *) s, len));
+ 
+     fprintf(prstream, "</text>\n");
+ }
+diff -Nru grace-5.1.25.orig/src/utils.c grace-5.1.25/src/utils.c
+--- grace-5.1.25.orig/src/utils.c	2021-12-27 17:16:03.000000000 -0500
++++ grace-5.1.25/src/utils.c	2021-12-27 17:21:59.000000000 -0500
+@@ -1171,12 +1171,12 @@
+     if (inwin) {
+         stufftextwin(s);
+     } else {
+-        printf(s);
++        printf("%s", s);
+     }
+ #endif
+     /* log results to file */
+     if (resfp != NULL) {
+-	fprintf(resfp, s);
++	fprintf(resfp, "%s", s);
+     }
+ }
+ 
+@@ -1222,7 +1222,9 @@
+     char buf[GR_MAXPATHLEN];
+     
+     if (wd == NULL) {
+-        getcwd(workingdir, GR_MAXPATHLEN - 1);
++        if (getcwd(workingdir, GR_MAXPATHLEN - 1) == NULL) {
++	    return RETURN_FAILURE;
++        }
+         if (workingdir[strlen(workingdir)-1] != '/') {
+             strcat(workingdir, "/");
+         }

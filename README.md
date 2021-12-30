@@ -21,6 +21,8 @@ and in the official version of grace in Maverick.
 
 6. Add buttons in Eval data for quick evaluation of basic formula.
 
+7. Set PNG as default printing device.
+
 Additional system-level patches (available in a single patch or as individual patches):
 
 1. grace-opt-flags: Added compiling optimization flags for better performance

@@ -1,0 +1,12 @@
+diff -Nru grace-5.1.25.orig/src/main.c grace-5.1.25/src/main.c
+--- grace-5.1.25.orig/src/main.c	2021-12-30 16:54:29.000000000 -0500
++++ grace-5.1.25/src/main.c	2021-12-30 16:56:45.000000000 -0500
+@@ -211,7 +211,7 @@
+     register_jpg_drv();
+ #endif
+ #ifdef HAVE_LIBPNG
+-    register_png_drv();
++    hdevice = register_png_drv();
+ #endif
+ 
+     register_mf_drv();

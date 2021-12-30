@@ -1,6 +1,6 @@
 diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
---- grace-5.1.25.orig/src/compwin.c	2021-12-24 15:43:09.000000000 -0500
-+++ grace-5.1.25/src/compwin.c	2021-12-24 16:05:26.000000000 -0500
+--- grace-5.1.25.orig/src/compwin.c	2021-12-29 22:01:48.000000000 -0500
++++ grace-5.1.25/src/compwin.c	2021-12-29 22:03:16.000000000 -0500
 @@ -60,6 +60,7 @@
  static Widget but2[3];
  
@@ -13,7 +13,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  static void do_prune_toggle(Widget w, XtPointer client_data, XtPointer call_data);
  static void do_prune_proc(Widget w, XtPointer client_data, XtPointer call_data);
  static void set_regr_sensitivity(Widget , XtPointer , XtPointer );
-+static TextStructure *amount_text;
++static TextStructure *amount_text_add_sub, *amount_text_mul_div;
  
  typedef struct _Eval_ui {
      Widget top;
@@ -30,7 +30,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  
  	eui.top = XmCreateDialogShell(app_shell, "evaluateExpression", NULL, 0);
          XtVaSetValues(eui.top, XmNallowShellResize, True, NULL);
-@@ -115,6 +118,44 @@
+@@ -115,6 +118,50 @@
              XmNrecomputeSize, True,
              NULL);
  
@@ -44,10 +44,10 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    int type_div = 4;
 +
 +    rc_btn1 = CreateHContainer(rc_btn);
-+    amount_text = CreateCSText(rc_btn1, "Amount");
-+    SetTextString(amount_text, "0.1");
++    amount_text_add_sub = CreateCSText(rc_btn1, "Amount:");
++    SetTextString(amount_text_add_sub, "0.1");
 +
-+    rc_btn1 = CreateHContainer(rc_btn);
++    //rc_btn1 = CreateHContainer(rc_btn);
 +    eui.bt_add = XmCreatePushButton (rc_btn1, "Add", NULL, NULL);
 +    XtAddCallback (eui.bt_add, XmNarmCallback, compute_aac_btn, (XtPointer) type_add);
 +    XtAddCallback (eui.bt_add, XmNactivateCallback, compute_aac_btn, (XtPointer) type_add);
@@ -60,6 +60,12 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    XtAddCallback (eui.bt_sub, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_sub);
 +    XtManageChild (eui.bt_sub);
 +
++    CreateSeparator(rc_btn);
++
++    rc_btn1 = CreateHContainer(rc_btn);
++    amount_text_mul_div = CreateCSText(rc_btn1, "Amount:");
++    SetTextString(amount_text_mul_div, "1.1");
++    
 +    eui.bt_mul = XmCreatePushButton (rc_btn1, "Mul", NULL, NULL);
 +    XtAddCallback (eui.bt_mul, XmNarmCallback, compute_aac_btn, (XtPointer) type_mul);
 +    XtAddCallback (eui.bt_mul, XmNactivateCallback, compute_aac_btn, (XtPointer) type_mul);
@@ -75,7 +81,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  	CreateSeparator(rc_trans);
  	eui.formula_item = CreateScrollTextItem2(rc_trans, 3, "Formula:");
  
-@@ -147,6 +188,112 @@
+@@ -147,6 +194,112 @@
      unset_wait_cursor();
  }
  
@@ -104,13 +110,13 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    int type = (int) client_data;
 +
 +    if (type == 1) {
-+        strcat(strcpy(fstr,"y=y+"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y+"),GetTextString(amount_text_add_sub));
 +    } else if (type == 2) {
-+        strcat(strcpy(fstr,"y=y-"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y-"),GetTextString(amount_text_add_sub));
 +    } else if (type == 3) {
-+        strcat(strcpy(fstr,"y=y*"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y*"),GetTextString(amount_text_mul_div));
 +    } else if (type == 4) {
-+        strcat(strcpy(fstr,"y=y/"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y/"),GetTextString(amount_text_mul_div));
 +    } else {
 +        errmsg("Missing formula");
 +    }

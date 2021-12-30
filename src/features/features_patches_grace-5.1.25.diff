@@ -1,6 +1,6 @@
 diff -Nru grace-5.1.25.orig/doc/UsersGuide.html grace-5.1.25/doc/UsersGuide.html
---- grace-5.1.25.orig/doc/UsersGuide.html	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/doc/UsersGuide.html	2021-12-28 18:34:54.000000000 -0500
+--- grace-5.1.25.orig/doc/UsersGuide.html	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/doc/UsersGuide.html	2021-12-29 22:52:26.000000000 -0500
 @@ -1516,6 +1516,103 @@
  sample range or to produce an evenly spaced set from an irregular
  one.</P>
@@ -106,8 +106,8 @@ diff -Nru grace-5.1.25.orig/doc/UsersGuide.html grace-5.1.25/doc/UsersGuide.html
  
  <P>This popup can be used to compute autocorrelation
 diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
---- grace-5.1.25.orig/src/compwin.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/compwin.c	2021-12-28 18:35:19.000000000 -0500
+--- grace-5.1.25.orig/src/compwin.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/compwin.c	2021-12-29 22:53:05.000000000 -0500
 @@ -60,6 +60,7 @@
  static Widget but2[3];
  
@@ -120,7 +120,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  static void do_prune_toggle(Widget w, XtPointer client_data, XtPointer call_data);
  static void do_prune_proc(Widget w, XtPointer client_data, XtPointer call_data);
  static void set_regr_sensitivity(Widget , XtPointer , XtPointer );
-+static TextStructure *amount_text;
++static TextStructure *amount_text_add_sub, *amount_text_mul_div;
  
  typedef struct _Eval_ui {
      Widget top;
@@ -137,7 +137,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  
  	eui.top = XmCreateDialogShell(app_shell, "evaluateExpression", NULL, 0);
          XtVaSetValues(eui.top, XmNallowShellResize, True, NULL);
-@@ -115,6 +118,44 @@
+@@ -115,6 +118,50 @@
              XmNrecomputeSize, True,
              NULL);
  
@@ -151,10 +151,10 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    int type_div = 4;
 +
 +    rc_btn1 = CreateHContainer(rc_btn);
-+    amount_text = CreateCSText(rc_btn1, "Amount");
-+    SetTextString(amount_text, "0.1");
++    amount_text_add_sub = CreateCSText(rc_btn1, "Amount:");
++    SetTextString(amount_text_add_sub, "0.1");
 +
-+    rc_btn1 = CreateHContainer(rc_btn);
++    //rc_btn1 = CreateHContainer(rc_btn);
 +    eui.bt_add = XmCreatePushButton (rc_btn1, "Add", NULL, NULL);
 +    XtAddCallback (eui.bt_add, XmNarmCallback, compute_aac_btn, (XtPointer) type_add);
 +    XtAddCallback (eui.bt_add, XmNactivateCallback, compute_aac_btn, (XtPointer) type_add);
@@ -167,6 +167,12 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    XtAddCallback (eui.bt_sub, XmNdisarmCallback, compute_aac_btn, (XtPointer) type_sub);
 +    XtManageChild (eui.bt_sub);
 +
++    CreateSeparator(rc_btn);
++
++    rc_btn1 = CreateHContainer(rc_btn);
++    amount_text_mul_div = CreateCSText(rc_btn1, "Amount:");
++    SetTextString(amount_text_mul_div, "1.1");
++    
 +    eui.bt_mul = XmCreatePushButton (rc_btn1, "Mul", NULL, NULL);
 +    XtAddCallback (eui.bt_mul, XmNarmCallback, compute_aac_btn, (XtPointer) type_mul);
 +    XtAddCallback (eui.bt_mul, XmNactivateCallback, compute_aac_btn, (XtPointer) type_mul);
@@ -182,7 +188,7 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
  	CreateSeparator(rc_trans);
  	eui.formula_item = CreateScrollTextItem2(rc_trans, 3, "Formula:");
  
-@@ -147,6 +188,112 @@
+@@ -147,6 +194,112 @@
      unset_wait_cursor();
  }
  
@@ -211,13 +217,13 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
 +    int type = (int) client_data;
 +
 +    if (type == 1) {
-+        strcat(strcpy(fstr,"y=y+"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y+"),GetTextString(amount_text_add_sub));
 +    } else if (type == 2) {
-+        strcat(strcpy(fstr,"y=y-"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y-"),GetTextString(amount_text_add_sub));
 +    } else if (type == 3) {
-+        strcat(strcpy(fstr,"y=y*"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y*"),GetTextString(amount_text_mul_div));
 +    } else if (type == 4) {
-+        strcat(strcpy(fstr,"y=y/"),GetTextString(amount_text));
++        strcat(strcpy(fstr,"y=y/"),GetTextString(amount_text_mul_div));
 +    } else {
 +        errmsg("Missing formula");
 +    }
@@ -296,8 +302,8 @@ diff -Nru grace-5.1.25.orig/src/compwin.c grace-5.1.25/src/compwin.c
   * evaluate a formula
   */
 diff -Nru grace-5.1.25.orig/src/device.h grace-5.1.25/src/device.h
---- grace-5.1.25.orig/src/device.h	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/device.h	2021-12-28 18:34:57.000000000 -0500
+--- grace-5.1.25.orig/src/device.h	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/device.h	2021-12-29 22:52:29.000000000 -0500
 @@ -43,6 +43,8 @@
  #define MM_PER_INCH	25.4
  #define CM_PER_INCH	(MM_PER_INCH/10)
@@ -308,8 +314,8 @@ diff -Nru grace-5.1.25.orig/src/device.h grace-5.1.25/src/device.h
  /* device output can be redirected to file/printer(both) */
  #define DEVICE_TERM	0
 diff -Nru grace-5.1.25.orig/src/draw.c grace-5.1.25/src/draw.c
---- grace-5.1.25.orig/src/draw.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/draw.c	2021-12-28 18:34:54.000000000 -0500
+--- grace-5.1.25.orig/src/draw.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/draw.c	2021-12-29 22:52:26.000000000 -0500
 @@ -258,6 +258,12 @@
      return (vp);
  }
@@ -324,8 +330,8 @@ diff -Nru grace-5.1.25.orig/src/draw.c grace-5.1.25/src/draw.c
  void symplus(VPoint vp, double s)
  {
 diff -Nru grace-5.1.25.orig/src/draw.h grace-5.1.25/src/draw.h
---- grace-5.1.25.orig/src/draw.h	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/draw.h	2021-12-28 18:34:54.000000000 -0500
+--- grace-5.1.25.orig/src/draw.h	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/draw.h	2021-12-29 22:52:26.000000000 -0500
 @@ -236,6 +236,7 @@
  double xy_xconv(double wx);
  double xy_yconv(double wy);
@@ -335,8 +341,8 @@ diff -Nru grace-5.1.25.orig/src/draw.h grace-5.1.25/src/draw.h
  void view2world(double xv, double yv, double *xw, double *yw);
  
 diff -Nru grace-5.1.25.orig/src/events.c grace-5.1.25/src/events.c
---- grace-5.1.25.orig/src/events.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/events.c	2021-12-28 18:35:04.000000000 -0500
+--- grace-5.1.25.orig/src/events.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/events.c	2021-12-29 22:52:42.000000000 -0500
 @@ -111,6 +111,7 @@
      int axisno;
      Datapoint dpoint;
@@ -468,8 +474,8 @@ diff -Nru grace-5.1.25.orig/src/events.c grace-5.1.25/src/events.c
  
      action_flag = act;
 diff -Nru grace-5.1.25.orig/src/events.h grace-5.1.25/src/events.h
---- grace-5.1.25.orig/src/events.h	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/events.h	2021-12-28 18:35:04.000000000 -0500
+--- grace-5.1.25.orig/src/events.h	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/events.h	2021-12-29 22:52:42.000000000 -0500
 @@ -81,7 +81,14 @@
      ZOOMY_1ST,
      ZOOMY_2ND,
@@ -487,8 +493,8 @@ diff -Nru grace-5.1.25.orig/src/events.h grace-5.1.25/src/events.h
  
  /* add points at */
 diff -Nru grace-5.1.25.orig/src/graphutils.h grace-5.1.25/src/graphutils.h
---- grace-5.1.25.orig/src/graphutils.h	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/graphutils.h	2021-12-28 18:35:12.000000000 -0500
+--- grace-5.1.25.orig/src/graphutils.h	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/graphutils.h	2021-12-29 22:52:55.000000000 -0500
 @@ -55,7 +55,8 @@
  #define GA_ORDER_HV_INV 4
  
@@ -500,8 +506,8 @@ diff -Nru grace-5.1.25.orig/src/graphutils.h grace-5.1.25/src/graphutils.h
  
  char *get_format_types(int f);
 diff -Nru grace-5.1.25.orig/src/mfdrv.c grace-5.1.25/src/mfdrv.c
---- grace-5.1.25.orig/src/mfdrv.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/mfdrv.c	2021-12-28 18:34:57.000000000 -0500
+--- grace-5.1.25.orig/src/mfdrv.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/mfdrv.c	2021-12-29 22:52:29.000000000 -0500
 @@ -53,7 +53,7 @@
            "gmf",
            TRUE,
@@ -512,8 +518,8 @@ diff -Nru grace-5.1.25.orig/src/mfdrv.c grace-5.1.25/src/mfdrv.c
           };
  
 diff -Nru grace-5.1.25.orig/src/mifdrv.c grace-5.1.25/src/mifdrv.c
---- grace-5.1.25.orig/src/mifdrv.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/mifdrv.c	2021-12-28 18:34:57.000000000 -0500
+--- grace-5.1.25.orig/src/mifdrv.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/mifdrv.c	2021-12-29 22:52:29.000000000 -0500
 @@ -56,7 +56,7 @@
                                 "mif",
                                 TRUE,
@@ -524,8 +530,8 @@ diff -Nru grace-5.1.25.orig/src/mifdrv.c grace-5.1.25/src/mifdrv.c
                                };
  
 diff -Nru grace-5.1.25.orig/src/motifinc.h grace-5.1.25/src/motifinc.h
---- grace-5.1.25.orig/src/motifinc.h	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/motifinc.h	2021-12-28 18:34:51.000000000 -0500
+--- grace-5.1.25.orig/src/motifinc.h	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/motifinc.h	2021-12-29 22:52:19.000000000 -0500
 @@ -450,4 +450,6 @@
  void savewidget(Widget w);
  void deletewidget(Widget w);
@@ -534,8 +540,8 @@ diff -Nru grace-5.1.25.orig/src/motifinc.h grace-5.1.25/src/motifinc.h
 +
  #endif /* __MOTIFINC_H_ */
 diff -Nru grace-5.1.25.orig/src/motifutils.c grace-5.1.25/src/motifutils.c
---- grace-5.1.25.orig/src/motifutils.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/motifutils.c	2021-12-28 18:35:15.000000000 -0500
+--- grace-5.1.25.orig/src/motifutils.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/motifutils.c	2021-12-29 22:52:59.000000000 -0500
 @@ -1065,7 +1065,7 @@
      xfree(bufp);
      
@@ -584,8 +590,8 @@ diff -Nru grace-5.1.25.orig/src/motifutils.c grace-5.1.25/src/motifutils.c
 +}
 +
 diff -Nru grace-5.1.25.orig/src/nonlwin.c grace-5.1.25/src/nonlwin.c
---- grace-5.1.25.orig/src/nonlwin.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/nonlwin.c	2021-12-28 18:34:54.000000000 -0500
+--- grace-5.1.25.orig/src/nonlwin.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/nonlwin.c	2021-12-29 22:52:26.000000000 -0500
 @@ -7,6 +7,7 @@
   * Copyright (c) 1996-2000 Grace Development Team
   * 
@@ -1055,8 +1061,8 @@ diff -Nru grace-5.1.25.orig/src/nonlwin.c grace-5.1.25/src/nonlwin.c
 +    update_nonl_frame();
 +}
 diff -Nru grace-5.1.25.orig/src/rstdrv.c grace-5.1.25/src/rstdrv.c
---- grace-5.1.25.orig/src/rstdrv.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/rstdrv.c	2021-12-28 18:34:57.000000000 -0500
+--- grace-5.1.25.orig/src/rstdrv.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/rstdrv.c	2021-12-29 22:52:29.000000000 -0500
 @@ -108,7 +108,7 @@
            "pnm",
            FALSE,
@@ -1085,8 +1091,8 @@ diff -Nru grace-5.1.25.orig/src/rstdrv.c grace-5.1.25/src/rstdrv.c
           };
  #endif
 diff -Nru grace-5.1.25.orig/src/setappwin.c grace-5.1.25/src/setappwin.c
---- grace-5.1.25.orig/src/setappwin.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/setappwin.c	2021-12-28 18:34:51.000000000 -0500
+--- grace-5.1.25.orig/src/setappwin.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/setappwin.c	2021-12-29 22:52:19.000000000 -0500
 @@ -399,6 +399,8 @@
  
  
@@ -1097,8 +1103,8 @@ diff -Nru grace-5.1.25.orig/src/setappwin.c grace-5.1.25/src/setappwin.c
      updatesymbols(cg, cset);
      
 diff -Nru grace-5.1.25.orig/src/strwin.c grace-5.1.25/src/strwin.c
---- grace-5.1.25.orig/src/strwin.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/strwin.c	2021-12-28 18:34:48.000000000 -0500
+--- grace-5.1.25.orig/src/strwin.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/strwin.c	2021-12-29 22:51:27.000000000 -0500
 @@ -939,7 +939,7 @@
  	line_ui.y2_item = CreateTextItem2(rc, 12, "Y2 = ");
  	ManageChild(rc);
@@ -1109,8 +1115,8 @@ diff -Nru grace-5.1.25.orig/src/strwin.c grace-5.1.25/src/strwin.c
  	CreateCommandButtons(panel, 2, buts, label1);
  	XtAddCallback(buts[0], XmNactivateCallback,
 diff -Nru grace-5.1.25.orig/src/tickwin.c grace-5.1.25/src/tickwin.c
---- grace-5.1.25.orig/src/tickwin.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/tickwin.c	2021-12-28 18:34:51.000000000 -0500
+--- grace-5.1.25.orig/src/tickwin.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/tickwin.c	2021-12-29 22:52:19.000000000 -0500
 @@ -454,6 +454,9 @@
              int maxval;
              XtVaGetValues(vbar, XmNmaximum, &maxval, NULL);
@@ -1122,8 +1128,8 @@ diff -Nru grace-5.1.25.orig/src/tickwin.c grace-5.1.25/src/tickwin.c
      }
      update_ticks(cg);
 diff -Nru grace-5.1.25.orig/src/worldwin.c grace-5.1.25/src/worldwin.c
---- grace-5.1.25.orig/src/worldwin.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/worldwin.c	2021-12-28 18:35:12.000000000 -0500
+--- grace-5.1.25.orig/src/worldwin.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/worldwin.c	2021-12-29 22:52:55.000000000 -0500
 @@ -240,10 +240,10 @@
          SetSpinChoice(ui->nrows, (double) 1);
          SetSpinChoice(ui->ncols, (double) 1);
@@ -1140,8 +1146,8 @@ diff -Nru grace-5.1.25.orig/src/worldwin.c grace-5.1.25/src/worldwin.c
          SetSpinChoice(ui->hgap, GA_GAP_DEFAULT);
          SetSpinChoice(ui->vgap, GA_GAP_DEFAULT);
 diff -Nru grace-5.1.25.orig/src/xmgrace.c grace-5.1.25/src/xmgrace.c
---- grace-5.1.25.orig/src/xmgrace.c	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/src/xmgrace.c	2021-12-28 18:35:08.000000000 -0500
+--- grace-5.1.25.orig/src/xmgrace.c	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/src/xmgrace.c	2021-12-29 22:52:50.000000000 -0500
 @@ -264,8 +264,8 @@
  };
  
@@ -1247,8 +1253,8 @@ diff -Nru grace-5.1.25.orig/src/xmgrace.c grace-5.1.25/src/xmgrace.c
      bt = CreateButton(rcleft, "Exit");
      AddButtonCB(bt, MenuCB, (void *) MENU_EXIT);
 diff -Nru grace-5.1.25.orig/templates/Default.agr grace-5.1.25/templates/Default.agr
---- grace-5.1.25.orig/templates/Default.agr	2021-12-28 18:24:43.000000000 -0500
-+++ grace-5.1.25/templates/Default.agr	2021-12-28 18:35:12.000000000 -0500
+--- grace-5.1.25.orig/templates/Default.agr	2021-12-29 22:50:29.000000000 -0500
++++ grace-5.1.25/templates/Default.agr	2021-12-29 22:52:55.000000000 -0500
 @@ -104,7 +104,7 @@
  @    world 0, 0, 1, 1
  @    stack world 0, 0, 0, 0

@@ -1,0 +1,36 @@
+diff -Nru grace-5.1.25.orig/src/motifutils.c grace-5.1.25/src/motifutils.c
+--- grace-5.1.25.orig/src/motifutils.c	2025-05-30 09:29:41
++++ grace-5.1.25/src/motifutils.c	2025-05-30 09:39:00
+@@ -1065,7 +1065,7 @@
+     xfree(bufp);
+     
+     xmstr = XmStringCreateLocalized(get_workingdir());
+-    XtVaSetValues(retval->FSB, XmNdirectory, xmstr, NULL);
++    XtVaSetValues(retval->FSB, XmNdirectory, xmstr, XmNmarginHeight, 0, NULL);
+     XmStringFree(xmstr);
+     
+     XtAddCallback(retval->FSB,
+diff -Nru grace-5.1.25.orig/src/nonlwin.c grace-5.1.25/src/nonlwin.c
+--- grace-5.1.25.orig/src/nonlwin.c	2025-05-30 09:29:41
++++ grace-5.1.25/src/nonlwin.c	2025-05-30 09:39:25
+@@ -190,7 +190,7 @@
+         
+ 	sw = XtVaCreateManagedWidget("sw",
+ 				     xmScrolledWindowWidgetClass, nonl_main,
+-				     XmNheight, 180,
++				     XmNheight, 140,
+ 				     XmNscrollingPolicy, XmAUTOMATIC,
+ 				     NULL);
+ 
+diff -Nru grace-5.1.25.orig/src/strwin.c grace-5.1.25/src/strwin.c
+--- grace-5.1.25.orig/src/strwin.c	2025-05-30 09:29:41
++++ grace-5.1.25/src/strwin.c	2025-05-30 09:39:37
+@@ -939,7 +939,7 @@
+ 	line_ui.y2_item = CreateTextItem2(rc, 12, "Y2 = ");
+ 	ManageChild(rc);
+ 
+-	CreateSeparator(panel);
++	//CreateSeparator(panel);
+ 
+ 	CreateCommandButtons(panel, 2, buts, label1);
+ 	XtAddCallback(buts[0], XmNactivateCallback,
